@@ -45,6 +45,12 @@ namespace MiniETrade.API.Controllers
         [HttpPost("addproduct")]
         public async Task<IActionResult> AddProduct([FromBody] Product product)
         {
+
+            if (ModelState.IsValid)
+            {
+
+            }
+
             var result = await _productWriteRepository.AddAsync(product);
             await _productWriteRepository.SaveAsync();
             return Ok(result);
