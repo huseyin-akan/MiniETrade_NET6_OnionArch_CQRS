@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MiniETrade.Application.Repositories;
+using MiniETrade.Application.RequestParameters;
 using MiniETrade.Domain.Entities;
 
 namespace MiniETrade.API.Controllers
@@ -36,10 +37,19 @@ namespace MiniETrade.API.Controllers
         }
 
         [HttpGet("getall")]
-        public IActionResult GetAllProducts()
+        public IActionResult GetAllProducts([FromQuery] Pagination pagination)
         {
-            var result = _productReadRepository.GetAll().ToList();
-            return Ok(result);
+            var totalCount = _productReadRepository.GetAll(false).Count();
+            var result = _productReadRepository.GetAll(false).Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Stock,
+                p.Price,
+                p.CreatedDate,
+                p.UpdatedDate
+            }).Skip(pagination.Page * pagination.Size).Take(pagination.Size);
+            return Ok(new { totalCount, result });
         }
 
         [HttpPost("addproduct")]
