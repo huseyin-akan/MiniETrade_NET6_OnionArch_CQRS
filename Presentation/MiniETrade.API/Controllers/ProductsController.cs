@@ -12,11 +12,15 @@ namespace MiniETrade.API.Controllers
     {
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
+        public ProductsController(IProductReadRepository productReadRepository,
+            IProductWriteRepository productWriteRepository,
+            IWebHostEnvironment webHostEnvironment)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet("addsome")]
@@ -80,6 +84,29 @@ namespace MiniETrade.API.Controllers
             var result = _productWriteRepository.Update(product);
             await _productWriteRepository.SaveAsync();
             return Ok(result);
+        }
+
+        [HttpPost("uploadimage")]
+        public async Task<IActionResult> UploadImage()
+        {
+
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");   //wwwroot/resource/product-images
+            
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                string fullPath = Path.Combine(uploadPath, $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}");
+
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+
+                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024*1024, useAsync : false);
+
+                file.CopyTo(fileStream);
+                fileStream.Flush();
+            }
+            return Ok();
         }
     }
 }
