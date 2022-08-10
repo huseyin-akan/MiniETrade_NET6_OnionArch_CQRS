@@ -1,5 +1,6 @@
 ﻿using FluentValidation.AspNetCore;
 using MiniETrade.Application.Validators.Products;
+using MiniETrade.Infrastructure;
 using MiniETrade.Infrastructure.Filters;
 using MiniETrade.Persistence;
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddPersistenceServices();
+builder.Services.AddInfrastructureServices();
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     //policy => policy.AllowAnyHeader().AllowAnyOrigin()  //her s.a diyen siteye girebilir þeklinde bir ayarlama.
     policy => policy.WithOrigins("http://localhost:4200/", "https://localhost:4200/", "http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod() //böylece sadece burdaki arkadaþlar istek atabilirler API'ye.
