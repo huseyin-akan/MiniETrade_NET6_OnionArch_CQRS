@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Application.RequestParameters;
-using MiniETrade.Application.Services;
 using MiniETrade.Domain.Entities;
 using System.Diagnostics;
 
@@ -15,17 +14,14 @@ namespace MiniETrade.API.Controllers
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IFileService _fileService;
 
         public ProductsController(IProductReadRepository productReadRepository,
             IProductWriteRepository productWriteRepository,
-            IWebHostEnvironment webHostEnvironment,
-            IFileService fileService)
+            IWebHostEnvironment webHostEnvironment)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
-            _fileService = fileService;
         }
 
         [HttpGet("addsome")]
@@ -98,13 +94,14 @@ namespace MiniETrade.API.Controllers
             Console.WriteLine("İş başladı");
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            var result = await _fileService.UploadAsync("product-images", x);            
+            //var result = await _fileService.UploadAsync("product-images", x);            
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Console.WriteLine("Geçen süre ise : " + elapsedMs );
 
-            return Ok(result);
+            //return Ok(result);
+            return Ok();
         }
     }
 }

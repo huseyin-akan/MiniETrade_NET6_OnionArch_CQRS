@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MiniETrade.Application.Services;
-using MiniETrade.Infrastructure.Services;
+using MiniETrade.Application.Abstractions.Storage;
+using MiniETrade.Infrastructure.Enums;
+using MiniETrade.Infrastructure.Services.Storage;
+using MiniETrade.Infrastructure.Services.Storage.Local;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +13,31 @@ namespace MiniETrade.Infrastructure
 {
     public static class ServiceRegistration
     {
-        public static void AddInfrastructureServices(this IServiceCollection services)
+        public static void AddInfrastructureServices(this IServiceCollection serviceCollection)
         {
-            services.AddScoped<IFileService, FileService>();
+            serviceCollection.AddScoped<IStorageService, StorageService>();
+        }
+        public static void AddStorage<T>(this IServiceCollection serviceCollection) where T : Storage, IStorage
+        {
+            serviceCollection.AddScoped<IStorage, T>();
+        }
+        public static void AddStorage(this IServiceCollection serviceCollection, StorageType storageType)
+        {
+            switch (storageType)
+            {
+                case StorageType.Local:
+                    serviceCollection.AddScoped<IStorage, LocalStorage>();
+                    break;
+                case StorageType.Azure:
+                    //serviceCollection.AddScoped<IStorage, AzureStorage>();
+                    break;
+                case StorageType.AWS:
+
+                    break;
+                default:
+                    serviceCollection.AddScoped<IStorage, LocalStorage>();
+                    break;
+            }
         }
     }
 }
