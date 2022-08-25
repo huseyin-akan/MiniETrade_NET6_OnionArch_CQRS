@@ -14,5 +14,6 @@ namespace MiniETrade.Domain.Entities
         public float Price { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
+        public ICollection<ProductImageFile> ProductImages { get; set; }
     }
 }

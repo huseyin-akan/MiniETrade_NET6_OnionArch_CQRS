@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MiniETrade.Application.Abstractions.Storage;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Application.RequestParameters;
 using MiniETrade.Domain.Entities;
@@ -14,14 +16,21 @@ namespace MiniETrade.API.Controllers
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IStorageService _storageService;
+        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
+
 
         public ProductsController(IProductReadRepository productReadRepository,
             IProductWriteRepository productWriteRepository,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IStorageService storageService,
+            IProductImageFileWriteRepository productImageFileWriteRepository)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
+            _storageService = storageService;
+            _productImageFileWriteRepository = productImageFileWriteRepository;
         }
 
         [HttpGet("addsome")]
@@ -88,19 +97,49 @@ namespace MiniETrade.API.Controllers
         }
 
         [HttpPost("uploadimage")]
-        public async Task<IActionResult> UploadImage()
+        public async Task<IActionResult> UploadImage(string id)
         {
             var x = Request.Form.Files;
-            Console.WriteLine("İş başladı");
-            var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            //var result = await _fileService.UploadAsync("product-images", x);            
+            var result = await _storageService.UploadAsync("product-images", x);
 
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
-            Console.WriteLine("Geçen süre ise : " + elapsedMs );
+            var product = await _productReadRepository.GetByIdAsync(id);
+            
+            await _productImageFileWriteRepository.AddRangeAsync(result.Select(r => new ProductImageFile
+            {
+                FileName = r.fileName,
+                Path = r.pathOrContainerName ,
+                Products = new List<Product>() { product } 
+            }).ToList());
 
-            //return Ok(result);
+            await _productImageFileWriteRepository.SaveAsync();
+            
+            return Ok(result);
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetProductImages(string id)
+        {
+            var product = await _productReadRepository.Table.Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+           
+            return Ok(product.ProductImages.Select(p => new
+            {
+                p.Path,
+                p.FileName,
+                p.Id
+            }));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteProductImage(string productId, string imageId)
+        {
+            var product = await _productReadRepository.Table.Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.Id == Guid.Parse(productId));
+
+            var productImageFile = product.ProductImages.FirstOrDefault(p => p.Id == Guid.Parse(imageId));
+            product.ProductImages.Remove(productImageFile);
+            await _productWriteRepository.SaveAsync();
             return Ok();
         }
     }
