@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniETrade.Application.Abstractions.Storage;
+using MiniETrade.Application.Features.Products.Commands;
+using MiniETrade.Application.Features.Products.Queries;
 using MiniETrade.Application.Repositories;
-using MiniETrade.Application.RequestParameters;
 using MiniETrade.Domain.Entities;
 using System.Diagnostics;
+using System.Net;
 
 namespace MiniETrade.API.Controllers
 {
@@ -19,18 +22,21 @@ namespace MiniETrade.API.Controllers
         private readonly IStorageService _storageService;
         private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
 
+        private readonly IMediator _mediator;
 
         public ProductsController(IProductReadRepository productReadRepository,
             IProductWriteRepository productWriteRepository,
             IWebHostEnvironment webHostEnvironment,
             IStorageService storageService,
-            IProductImageFileWriteRepository productImageFileWriteRepository)
+            IProductImageFileWriteRepository productImageFileWriteRepository,
+            IMediator mediator)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
             _storageService = storageService;
             _productImageFileWriteRepository = productImageFileWriteRepository;
+            _mediator = mediator;
         }
 
         [HttpGet("addsome")]
@@ -51,33 +57,17 @@ namespace MiniETrade.API.Controllers
         }
 
         [HttpGet("getall")]
-        public IActionResult GetAllProducts([FromQuery] Pagination pagination)
+        public async Task<IActionResult> GetAllProducts([FromQuery] GetAllProductsQueryRequest request)
         {
-            var totalCount = _productReadRepository.GetAll(false).Count();
-            var result = _productReadRepository.GetAll(false).Select(p => new
-            {
-                p.Id,
-                p.Name,
-                p.Stock,
-                p.Price,
-                p.CreatedDate,
-                p.UpdatedDate
-            }).Skip(pagination.Page * pagination.Size).Take(pagination.Size);
-            return Ok(new { totalCount, result });
+            var result = await _mediator.Send(request);
+            return Ok(result);
         }
 
         [HttpPost("addproduct")]
-        public async Task<IActionResult> AddProduct([FromBody] Product product)
+        public async Task<IActionResult> AddProduct([FromBody] CreateProductCommandRequest request)
         {
-
-            if (ModelState.IsValid)
-            {
-
-            }
-
-            var result = await _productWriteRepository.AddAsync(product);
-            await _productWriteRepository.SaveAsync();
-            return Ok(result);
+            var result = await _mediator.Send(request);
+            return StatusCode((int)HttpStatusCode.Created);
         }
 
         [HttpDelete("deleteproduct/{productId}")]

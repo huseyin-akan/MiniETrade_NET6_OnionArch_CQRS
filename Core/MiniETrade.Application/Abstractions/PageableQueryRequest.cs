@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.RequestParameters
+namespace MiniETrade.Application.Abstractions
 {
-    public record Pagination
+    public abstract class PageableQueryRequest
     {
         public int Page { get; set; } = 0;
         public int Size { get; set; } = 5;

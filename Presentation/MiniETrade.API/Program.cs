@@ -1,4 +1,5 @@
 ﻿using FluentValidation.AspNetCore;
+using MiniETrade.Application;
 using MiniETrade.Application.Validators.Products;
 using MiniETrade.Infrastructure;
 using MiniETrade.Infrastructure.Enums;
@@ -12,12 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
 
 //builder.Services.AddStorage<LocalStorage>(); aşağıdaki yapı daha güzel oldu.
 builder.Services.AddStorage(StorageType.Local);
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(
-    //policy => policy.AllowAnyHeader().AllowAnyOrigin()  //her s.a diyen siteye girebilir þeklinde bir ayarlama.
+    //policy => policy.AllowAnyHeader().AllowAnyOrigin()  //her s.a diyen siteye girebilir şeklinde bir ayarlama.
     policy => policy.WithOrigins("http://localhost:4200/", "https://localhost:4200/", "http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod() //böylece sadece burdaki arkadaþlar istek atabilirler API'ye.
 )) ;
 
