@@ -85,11 +85,6 @@ namespace MiniETrade.Infrastructure.Services.Storage
             var biggestNumber = fileNumbers.Max();
             biggestNumber++;
             return regulatedFileName + "-" + biggestNumber + extension;
-        }
-
-        public virtual string Deneme()
-        {
-            return "denedik";
-        }
+        }        
     }
 }

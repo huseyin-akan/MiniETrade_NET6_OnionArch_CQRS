@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniETrade.Application.Abstractions.Storage;
+using MiniETrade.Application.Features.ProductImageFiles.Commands;
 using MiniETrade.Application.Features.Products.Commands;
 using MiniETrade.Application.Features.Products.Queries;
 using MiniETrade.Application.Repositories;
@@ -18,24 +19,16 @@ namespace MiniETrade.API.Controllers
     {
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IStorageService _storageService;
-        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
 
         private readonly IMediator _mediator;
 
-        public ProductsController(IProductReadRepository productReadRepository,
+        public ProductsController(
+            IProductReadRepository productReadRepository,
             IProductWriteRepository productWriteRepository,
-            IWebHostEnvironment webHostEnvironment,
-            IStorageService storageService,
-            IProductImageFileWriteRepository productImageFileWriteRepository,
             IMediator mediator)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
-            _webHostEnvironment = webHostEnvironment;
-            _storageService = storageService;
-            _productImageFileWriteRepository = productImageFileWriteRepository;
             _mediator = mediator;
         }
 
@@ -70,40 +63,31 @@ namespace MiniETrade.API.Controllers
             return StatusCode((int)HttpStatusCode.Created);
         }
 
-        [HttpDelete("deleteproduct/{productId}")]
-        public async Task<IActionResult> DeleteProduct( [FromRoute]string productId)
+        [HttpPut("updateproduct")]
+        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommandRequest request)
         {
-            var result = await _productWriteRepository.RemoveAsync(productId);
-            await _productWriteRepository.SaveAsync();
+            var result = await _mediator.Send(request);
             return Ok(result);
         }
 
-        [HttpPut("updateproduct")]
-        public async Task<IActionResult> UpdateProduct([FromBody] Product product)
+        [HttpGet("getproductbyid/{id}")]
+        public async Task<IActionResult> GetProductById([FromRoute] GetProductByIdQueryRequest request)
         {
-            var result = _productWriteRepository.Update(product);
-            await _productWriteRepository.SaveAsync();
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpDelete("deleteproduct/{productId}")]
+        public async Task<IActionResult> DeleteProduct( [FromRoute] DeleteProductCommandRequest request)
+        {
+            var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("uploadimage")]
-        public async Task<IActionResult> UploadImage(string id)
+        public async Task<IActionResult> UploadImage([FromQuery] UploadProductImageCommandRequest request)
         {
-            var x = Request.Form.Files;
-
-            var result = await _storageService.UploadAsync("product-images", x);
-
-            var product = await _productReadRepository.GetByIdAsync(id);
-            
-            await _productImageFileWriteRepository.AddRangeAsync(result.Select(r => new ProductImageFile
-            {
-                FileName = r.fileName,
-                Path = r.pathOrContainerName ,
-                Products = new List<Product>() { product } 
-            }).ToList());
-
-            await _productImageFileWriteRepository.SaveAsync();
-            
+            var result = await _mediator.Send(request);
             return Ok(result);
         }
 
