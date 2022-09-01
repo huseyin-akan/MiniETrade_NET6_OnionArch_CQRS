@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniETrade.Application.Repositories;
+using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Persistence.Contexts;
 using MiniETrade.Persistence.Persistence;
 using System;
@@ -17,6 +18,16 @@ namespace MiniETrade.Persistence
         public static void AddPersistenceServices(this IServiceCollection services)
         {            
             services.AddDbContext<ETicaretAPIDbContext>(options => options.UseNpgsql(ConfigurationHelper.ConnectionString) );
+            
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.Password.RequiredLength = 3;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+            }).AddEntityFrameworkStores<ETicaretAPIDbContext>();
+
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();

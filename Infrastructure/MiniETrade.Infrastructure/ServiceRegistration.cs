@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MiniETrade.Application.Abstractions.Storage;
+using MiniETrade.Application.Abstractions.Token;
 using MiniETrade.Infrastructure.Enums;
 using MiniETrade.Infrastructure.Services.Storage;
 using MiniETrade.Infrastructure.Services.Storage.Local;
+using MiniETrade.Infrastructure.Services.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,8 @@ namespace MiniETrade.Infrastructure
         public static void AddInfrastructureServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IStorageService, StorageService>();
+            serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
+            
         }
         public static void AddStorage<T>(this IServiceCollection serviceCollection) where T : Storage, IStorage
         {

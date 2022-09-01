@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MiniETrade.Domain.Entities;
 using MiniETrade.Domain.Entities.Common;
+using MiniETrade.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ using File = MiniETrade.Domain.Entities.File;
 
 namespace MiniETrade.Persistence.Contexts
 {
-    public class ETicaretAPIDbContext :DbContext
+    public class ETicaretAPIDbContext :IdentityDbContext<AppUser, AppRole, string>
     {
         public ETicaretAPIDbContext(DbContextOptions options) : base(options)
         {
