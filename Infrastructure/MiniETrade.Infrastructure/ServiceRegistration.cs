@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MiniETrade.Application.Abstractions.MessageQue;
 using MiniETrade.Application.Abstractions.Storage;
 using MiniETrade.Application.Abstractions.Token;
 using MiniETrade.Infrastructure.Enums;
+using MiniETrade.Infrastructure.Services.MessageQue.RabbitMQ;
 using MiniETrade.Infrastructure.Services.Storage;
 using MiniETrade.Infrastructure.Services.Storage.Local;
 using MiniETrade.Infrastructure.Services.Token;
@@ -19,6 +21,7 @@ namespace MiniETrade.Infrastructure
         {
             serviceCollection.AddScoped<IStorageService, StorageService>();
             serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
+            serviceCollection.AddScoped<IMQService, RabbitMQService>();
             
         }
         public static void AddStorage<T>(this IServiceCollection serviceCollection) where T : Storage, IStorage
