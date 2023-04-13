@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Abstractions.MessageQue
 {
-    public interface IMQService
+    public interface IMassTransitService
     {
+        Task Publish<T>(T message) where T : class;
+        Task Send<T>(T message) where T : class;
     }
 }

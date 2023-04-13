@@ -1,8 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MassTransit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MiniETrade.Application.Abstractions;
 using MiniETrade.Application.Abstractions.MessageQue;
 using MiniETrade.Application.Abstractions.Storage;
 using MiniETrade.Application.Abstractions.Token;
 using MiniETrade.Infrastructure.Enums;
+using MiniETrade.Infrastructure.Services.MessageQue.MassTransit;
 using MiniETrade.Infrastructure.Services.MessageQue.RabbitMQ;
 using MiniETrade.Infrastructure.Services.Storage;
 using MiniETrade.Infrastructure.Services.Storage.Local;
@@ -22,8 +26,26 @@ namespace MiniETrade.Infrastructure
             serviceCollection.AddScoped<IStorageService, StorageService>();
             serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
             serviceCollection.AddScoped<IMQService, RabbitMQService>();
-            
+            serviceCollection.AddScoped<IMassTransitService, MassTransitService>();
         }
+
+        //MassTransit Configuration
+        public static void AddMassTransitRegistration(this IServiceCollection serviceCollection, IConfiguration configuration)
+        {
+            serviceCollection.AddMassTransit(
+                config =>
+                {
+                    config.UsingRabbitMq((context, _config) =>
+                    {
+                        _config.Host(configuration["RabbitMQ:Uri"], h =>
+                        {
+                            h.Username(configuration["RabbitMQ:Username"]);
+                            h.Password(configuration["RabbitMQ:Password"]);
+                        });
+                    });
+                });
+        }
+
         public static void AddStorage<T>(this IServiceCollection serviceCollection) where T : Storage, IStorage
         {
             serviceCollection.AddScoped<IStorage, T>();

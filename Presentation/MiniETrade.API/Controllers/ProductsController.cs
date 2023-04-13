@@ -9,6 +9,7 @@ using MiniETrade.Application.Features.Products.Commands;
 using MiniETrade.Application.Features.Products.Queries;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Domain.Entities;
+using MiniETrade.Domain.Exceptions;
 using System.Diagnostics;
 using System.Net;
 
@@ -59,6 +60,7 @@ namespace MiniETrade.API.Controllers
         }
 
         [HttpPost("addproduct")]
+        [AllowAnonymous] //TODO-HUS
         public async Task<IActionResult> AddProduct([FromBody] CreateProductCommandRequest request)
         {
             var result = await _mediator.Send(request);
@@ -99,7 +101,7 @@ namespace MiniETrade.API.Controllers
             var product = await _productReadRepository.Table.Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
            
-            return Ok(product.ProductImages.Select(p => new
+            return Ok(product?.ProductImages.Select(p => new
             {
                 p.Path,
                 p.FileName,
@@ -111,9 +113,10 @@ namespace MiniETrade.API.Controllers
         public async Task<IActionResult> DeleteProductImage(string productId, string imageId)
         {
             var product = await _productReadRepository.Table.Include(p => p.ProductImages)
-                .FirstOrDefaultAsync(p => p.Id == Guid.Parse(productId));
-
-            var productImageFile = product.ProductImages.FirstOrDefault(p => p.Id == Guid.Parse(imageId));
+                .FirstOrDefaultAsync(p => p.Id == Guid.Parse(productId)) ?? throw new DataNotFoundException();
+            
+            
+            var productImageFile = product.ProductImages.FirstOrDefault(p => p.Id == Guid.Parse(imageId)) ?? throw new DataNotFoundException();
             product.ProductImages.Remove(productImageFile);
             await _productWriteRepository.SaveAsync();
             return Ok();

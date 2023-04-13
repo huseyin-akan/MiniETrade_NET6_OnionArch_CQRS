@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MiniETrade.Application.Abstractions;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Persistence.Contexts;
 using MiniETrade.Persistence.Persistence;
+using MiniETrade.Persistence.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,8 @@ namespace MiniETrade.Persistence
             services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
             services.AddScoped<IFileReadRepository, FileReadRepository>();
             services.AddScoped<IFileWriteRepository, FileWriteRepository>();
+
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }

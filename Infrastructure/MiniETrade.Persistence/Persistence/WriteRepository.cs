@@ -23,10 +23,11 @@ namespace MiniETrade.Persistence.Persistence
         public Microsoft.EntityFrameworkCore.DbSet<T> Table
             => _context.Set<T>();
 
-        public async Task<bool> AddAsync(T model)
+        public async Task<T> AddAsync(T model)
         {
            EntityEntry<T> entityEntry =  await Table.AddAsync(model);
-           return entityEntry.State == EntityState.Added;
+           await _context.SaveChangesAsync();
+           return entityEntry.Entity;
         }
 
         public async Task<bool> AddRangeAsync(List<T> data)

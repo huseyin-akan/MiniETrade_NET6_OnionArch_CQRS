@@ -16,17 +16,17 @@ namespace MiniETrade.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
+        [HttpPost("createuser")]
         public async Task<IActionResult> CreateUser(CreateUserCommandRequest request)
         {
-            var result = _mediator.Send(request);
+            var result = await _mediator.Send(request);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUserCommandRequest request)
         {
-            var result = _mediator.Send(request);
+            var result = await _mediator.Send(request);
             return Ok(result);
         }
     }

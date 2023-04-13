@@ -6,20 +6,21 @@ using MiniETrade.Application.Validators.Products;
 using MiniETrade.Infrastructure;
 using MiniETrade.Infrastructure.Enums;
 using MiniETrade.Infrastructure.Filters;
-using MiniETrade.Infrastructure.Services.Storage.Local;
 using MiniETrade.Persistence;
 using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//MassTransit Registration
+builder.Services.AddMassTransitRegistration(builder.Configuration);
 
+// Add services to the container.
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 
-//builder.Services.AddStorage<LocalStorage>(); aşağıdaki yapı daha güzel oldu.
+//Stroge Management Registration
 builder.Services.AddStorage(StorageType.Local);
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(
@@ -50,7 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Token:Audience"],
             ValidIssuer = builder.Configuration["Token:Issuer"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
-            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
+            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null && expires > DateTime.UtcNow,
 
             NameClaimType = ClaimTypes.Name //JWT üzerinde Name claimne karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.
         };
