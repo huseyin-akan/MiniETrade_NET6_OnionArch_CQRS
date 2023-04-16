@@ -20,8 +20,7 @@ namespace MiniETrade.Persistence.Persistence
             _context = context;
         }
 
-        public Microsoft.EntityFrameworkCore.DbSet<T> Table
-            => _context.Set<T>();
+        public DbSet<T> Table => _context.Set<T>();
 
         public async Task<T> AddAsync(T model)
         {

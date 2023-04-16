@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Infrastructure.Services.MessageQue.RabbitMQ
 {
-    public class RabbitMQService : IMQService, IMQPublisherService, IMQConsumerService
+    public class RabbitMQService : IMQPublisherService, IMQConsumerService
     {
         private readonly IConfiguration _configuration;
 
@@ -371,8 +371,6 @@ namespace MiniETrade.Infrastructure.Services.MessageQue.RabbitMQ
             //};
 
             #endregion
-
-
 
             consumer.Received += (sender, e) =>
             {

@@ -8,5 +8,6 @@ namespace MiniETrade.Application.Abstractions.MessageQue
 {
     public interface IMQPublisherService
     {
+        void Publish();
     }
 }

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Abstractions.MessageQue
+namespace MiniETrade.Application.Abstractions.Caching
 {
-    public interface IMQService
+    public interface IInMemoryCachingService : ICachingService
     {
+
     }
 }

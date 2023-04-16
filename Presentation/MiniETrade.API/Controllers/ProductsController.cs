@@ -63,7 +63,7 @@ namespace MiniETrade.API.Controllers
         [AllowAnonymous] //TODO-HUS
         public async Task<IActionResult> AddProduct([FromBody] CreateProductCommandRequest request)
         {
-            var result = await _mediator.Send(request);
+            await _mediator.Send(request);
             return StatusCode((int)HttpStatusCode.Created);
         }
 

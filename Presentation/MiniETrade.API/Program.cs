@@ -13,19 +13,21 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 //MassTransit Registration
-builder.Services.AddMassTransitRegistration(builder.Configuration);
+//builder.Services.AddMassTransitRegistration(builder.Configuration); TODO-HUS şirket internetinde olunca hata veriyor. Kapattık şimdilik.
 
 // Add services to the container.
 builder.Services.AddPersistenceServices();
-builder.Services.AddInfrastructureServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 //Stroge Management Registration
 builder.Services.AddStorage(StorageType.Local);
 
+builder.Services.AddMemoryCache(); //In-memory cache kullanmak istersen.
+
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     //policy => policy.AllowAnyHeader().AllowAnyOrigin()  //her s.a diyen siteye girebilir şeklinde bir ayarlama.
-    policy => policy.WithOrigins("http://localhost:4200/", "https://localhost:4200/", "http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod() //böylece sadece burdaki arkadaþlar istek atabilirler API'ye.
+    policy => policy.WithOrigins("http://localhost:4200/", "https://localhost:4200/").AllowAnyHeader().AllowAnyMethod() //böylece sadece burdaki arkadaþlar istek atabilirler API'ye.
 )) ;
 
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>()) //Kendi yazdığımız custom filter'ı devreye sokuyoruz.

@@ -22,38 +22,29 @@ namespace MiniETrade.Application.Features.Products.Commands
     public class CreateProductCommandRequestHandler : IRequestHandler<CreateProductCommandRequest, CreateProductCommandResponse>
     {
         private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IMassTransitService _massTransitService;
+        //private readonly IMassTransitService _massTransitService; TODO-HUS geçici olarak kapattık. Açılmalı
 
-        public CreateProductCommandRequestHandler(IProductWriteRepository productWriteRepository, IMassTransitService massTransitService)
+        public CreateProductCommandRequestHandler(
+            IProductWriteRepository productWriteRepository
+            //,IMassTransitService massTransitService
+            )
         {
             _productWriteRepository = productWriteRepository;
-            _massTransitService = massTransitService;
+            //_massTransitService = massTransitService;
         }
 
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
         {
-            //TODO-HUS geçici olarak kapattık. Açılmalı alttaki de silinmeli.
-            //var addedProduct = await _productWriteRepository.AddAsync(new()
-            //{
-            //    Name = request.Name,
-            //    Stock = request.Stock,
-            //    Price = request.Price
-
-            //});
-
-            var addedProduct = new Product
+            var addedProduct = await _productWriteRepository.AddAsync(new()
             {
-                Id = Guid.NewGuid(),
-                CreatedDate = DateTime.Now,
                 Name = request.Name,
                 Stock = request.Stock,
                 Price = request.Price
-            };
 
-            var productCreatedEvent = new ProductCreated(addedProduct.Id, addedProduct.CreatedDate, addedProduct.Name, addedProduct.Stock, addedProduct.Price);
+            });
 
-            await _massTransitService.Publish(productCreatedEvent); //Ürün ekleme ile ilgili event fırlattık.
-            //await _massTransitService.Send(productCreatedEvent); //Ürün ekleme ile ilgili event fırlattık.
+            //var productCreatedEvent = new ProductCreated(addedProduct.Id, addedProduct.CreatedDate, addedProduct.Name, addedProduct.Stock, addedProduct.Price);
+            //await _massTransitService.Publish(productCreatedEvent); //Ürün ekleme ile ilgili event fırlattık. TODO-HUS geçici olarak kapattık.
 
             return new CreateProductCommandResponse() { };
         }
