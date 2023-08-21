@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using MiniETrade.Application.Abstractions;
+using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Features.AppUsers.Commands;
 using MiniETrade.Domain.Entities.Identity;
 using System;

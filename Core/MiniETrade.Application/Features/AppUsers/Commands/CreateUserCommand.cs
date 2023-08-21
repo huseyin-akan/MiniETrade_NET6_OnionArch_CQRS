@@ -1,6 +1,5 @@
 ﻿using MediatR;
-using MiniETrade.Application.Abstractions;
-using MiniETrade.Application.Exceptions;
+using MiniETrade.Application.Common.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

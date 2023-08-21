@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using MiniETrade.Application.Abstractions.Caching;
+using MiniETrade.Application.Common.Abstractions.Caching;
 using System;
 using System.Collections.Generic;
 using System.Linq;

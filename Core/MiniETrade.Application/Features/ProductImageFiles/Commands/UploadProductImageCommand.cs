@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
-using MiniETrade.Application.Abstractions.Storage;
+using MiniETrade.Application.Common.Abstractions.Storage;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Domain.Entities;
 using System;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using MiniETrade.Application.Abstractions.Token;
+using MiniETrade.Application.Common.Abstractions.Token;
 using MiniETrade.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;

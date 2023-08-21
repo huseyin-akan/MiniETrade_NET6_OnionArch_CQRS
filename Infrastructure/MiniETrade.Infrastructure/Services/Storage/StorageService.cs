@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using MiniETrade.Application.Abstractions.Storage;
+using MiniETrade.Application.Common.Abstractions.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;

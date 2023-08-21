@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MiniETrade.Application.Abstractions;
+using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Persistence.Contexts;

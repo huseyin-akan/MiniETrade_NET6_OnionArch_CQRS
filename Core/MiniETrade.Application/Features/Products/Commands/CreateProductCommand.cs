@@ -1,9 +1,5 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using MiniETrade.Application.Abstractions.MessageQue;
 using MiniETrade.Application.Repositories;
-using MiniETrade.Domain.Entities;
-using MiniETrade.Domain.Entities.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;

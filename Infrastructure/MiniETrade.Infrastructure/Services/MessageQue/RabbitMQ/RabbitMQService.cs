@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MiniETrade.Application.Abstractions.MessageQue;
+using MiniETrade.Application.Common.Abstractions.MessageQue;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;

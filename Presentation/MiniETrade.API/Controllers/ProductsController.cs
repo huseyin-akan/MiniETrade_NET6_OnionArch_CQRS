@@ -1,16 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MiniETrade.Application.Abstractions.Storage;
 using MiniETrade.Application.Features.ProductImageFiles.Commands;
 using MiniETrade.Application.Features.Products.Commands;
 using MiniETrade.Application.Features.Products.Queries;
 using MiniETrade.Application.Repositories;
-using MiniETrade.Domain.Entities;
 using MiniETrade.Domain.Exceptions;
-using System.Diagnostics;
 using System.Net;
 
 namespace MiniETrade.API.Controllers

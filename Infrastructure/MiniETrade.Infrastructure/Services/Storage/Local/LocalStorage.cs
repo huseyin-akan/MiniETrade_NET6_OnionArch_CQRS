@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using MiniETrade.Application.Abstractions.Storage.Local;
+using MiniETrade.Application.Common.Abstractions.Storage.Local;
 using System;
 using System.Collections.Generic;
 using System.Linq;

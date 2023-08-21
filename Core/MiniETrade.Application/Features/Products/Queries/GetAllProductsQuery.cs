@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using MiniETrade.Application.Abstractions;
+using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Repositories;
 using System;
 using System.Collections.Generic;

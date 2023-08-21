@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Domain.Entities.Common;
 using MiniETrade.Persistence.Contexts;
@@ -20,8 +21,7 @@ namespace MiniETrade.Persistence.Persistence
             _context = context;
         }
 
-        public DbSet<T> Table 
-            => _context.Set<T>();
+        public DbSet<T> Table => _context.Set<T>();
 
         public IQueryable<T> GetAll(bool tracking = true) {
             var query = Table.AsQueryable();
@@ -45,14 +45,27 @@ namespace MiniETrade.Persistence.Persistence
             return await query.FirstOrDefaultAsync(method);
         } 
             
-            
         public IQueryable<T> GetWhere(Expression<Func<T, bool>> method, bool tracking = true)
         {
             var query = Table.Where(method);
             if (!tracking) query = query.AsNoTracking();
             return query;
         }
-            
+
+        public async Task<T> GetAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T?> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null, bool withDeleted = false, bool enableTracking = true, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

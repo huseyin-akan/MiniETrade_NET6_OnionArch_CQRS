@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using MassTransit.Saga;
 using Microsoft.Extensions.Configuration;
-using MiniETrade.Application.Abstractions.MessageQue;
+using MiniETrade.Application.Common.Abstractions.MessageQue;
 using MiniETrade.Application.Features.Products.Commands;
 using System;
 using System.Collections.Generic;
