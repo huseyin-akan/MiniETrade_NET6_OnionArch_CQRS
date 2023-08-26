@@ -11,5 +11,6 @@ namespace MiniETrade.Domain.Entities.Common
         public Guid Id { get; set; }
         public DateTime CreatedDate{ get; set; }
         public virtual DateTime UpdatedDate { get; set; }
+        public virtual DateTime? DeletedDate { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using MiniETrade.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using File = MiniETrade.Domain.Entities.File;
@@ -16,6 +17,7 @@ namespace MiniETrade.Persistence.Contexts
     {
         public ETicaretAPIDbContext(DbContextOptions options) : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<Product> Products { get; set; }
@@ -35,11 +37,18 @@ namespace MiniETrade.Persistence.Contexts
                 {
                     EntityState.Added => data.Entity.CreatedDate = DateTime.UtcNow,
                     EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow,
+                    EntityState.Deleted => data.Entity.DeletedDate = DateTime.UtcNow,
                     _ => DateTime.UtcNow
                 };
             }
                 
             return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            //Assembly'de IEntityTypeConfiguration<T> interface'ini implement eden configuration classlarını ekler.
         }
     }
 }

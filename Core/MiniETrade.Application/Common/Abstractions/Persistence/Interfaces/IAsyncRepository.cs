@@ -16,7 +16,7 @@ namespace MiniETrade.Application.Repositories
         Task<TEntity?> GetAsync(
             Expression<Func<TEntity, bool>> predicate,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
-            bool isActive = false,
+            bool withDeleted = false,
             bool enableTracking = true,
             CancellationToken cancellation = default
             );
@@ -27,7 +27,7 @@ namespace MiniETrade.Application.Repositories
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
             int index = 0,
             int size = 10,
-            bool isActive = false,
+            bool withDeleted = false,
             bool enableTracking = true,
             CancellationToken cancellation = default
             );
@@ -39,14 +39,14 @@ namespace MiniETrade.Application.Repositories
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
             int index = 0,
             int size = 10,
-            bool isActive = false,
+            bool withDeleted = false,
             bool enableTracking = true,
             CancellationToken cancellation = default
             );
 
         Task<bool> AnyAsync(
             Expression<Func<TEntity, bool>>? predicate = null,
-            bool isActive = false,
+            bool withDeleted = false,
             bool enableTracking = true,
             CancellationToken cancellation = default
         );
