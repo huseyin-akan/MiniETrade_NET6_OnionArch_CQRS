@@ -1,4 +1,5 @@
 ﻿using MiniETrade.Application.Repositories;
+using MiniETrade.Application.Repositories.ProductImageFiles;
 using MiniETrade.Domain.Entities;
 using MiniETrade.Persistence.Contexts;
 using System;

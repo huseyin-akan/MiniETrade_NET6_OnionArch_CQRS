@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using File = MiniETrade.Domain.Entities.File;
 
-namespace MiniETrade.Application.Repositories
+namespace MiniETrade.Application.Repositories.Files;
+
+public interface IFileWriteRepository : IWriteRepository<File>
 {
-    public interface IFileWriteRepository : IWriteRepository<File>
-    {
-    }
 }

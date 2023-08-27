@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories
+namespace MiniETrade.Application.Repositories.ProductImageFiles
 {
-    public interface ICustomerWriteRepository : IWriteRepository<Customer>
+    public interface IProductImageFileWriteRepository : IWriteRepository<ProductImageFile>
     {
+
     }
 }

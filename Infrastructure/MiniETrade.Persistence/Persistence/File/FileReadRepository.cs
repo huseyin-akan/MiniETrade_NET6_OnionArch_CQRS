@@ -1,4 +1,5 @@
 ﻿using MiniETrade.Application.Repositories;
+using MiniETrade.Application.Repositories.Files;
 using MiniETrade.Persistence.Contexts;
 using System;
 using System.Collections.Generic;

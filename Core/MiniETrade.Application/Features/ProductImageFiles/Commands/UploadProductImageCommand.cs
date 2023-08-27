@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using MiniETrade.Application.Common.Abstractions.Storage;
-using MiniETrade.Application.Repositories;
+using MiniETrade.Application.Repositories.ProductImageFiles;
+using MiniETrade.Application.Repositories.Products;
 using MiniETrade.Domain.Entities;
 using System;
 using System.Collections.Generic;

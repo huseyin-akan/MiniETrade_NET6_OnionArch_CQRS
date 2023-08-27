@@ -6,6 +6,7 @@ using MiniETrade.Application.Features.ProductImageFiles.Commands;
 using MiniETrade.Application.Features.Products.Commands;
 using MiniETrade.Application.Features.Products.Queries;
 using MiniETrade.Application.Repositories;
+using MiniETrade.Application.Repositories.Products;
 using MiniETrade.Domain.Exceptions;
 using System.Net;
 

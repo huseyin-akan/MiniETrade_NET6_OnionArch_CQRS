@@ -10,18 +10,19 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Features.Products.Queries
 {
-    public class GetAllProductsQueryRequest : PageableQueryRequest, IRequest<GetAllProductsQueryResponse>
-    {       
+    //TODO-HUS buraya Include yaptığımız bir query yazıcaz.
+    public record GetSomeProductsQuery : PageableQueryRequestRec, IRequest<GetSomeProductsQueryResponse>
+    {
     }
 
-    public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQueryRequest, GetAllProductsQueryResponse>
+    public class GetSomeProductsQueryHandler : IRequestHandler<GetSomeProductsQuery, GetSomeProductsQueryResponse>
     {
         private readonly IProductReadRepository _productReadRepository;
-        public GetAllProductsQueryHandler(IProductReadRepository productReadRepository)
+        public GetSomeProductsQueryHandler(IProductReadRepository productReadRepository)
         {
             _productReadRepository = productReadRepository;
         }
-        public async Task<GetAllProductsQueryResponse> Handle(GetAllProductsQueryRequest request, CancellationToken cancellationToken)
+        public async Task<GetSomeProductsQueryResponse> Handle(GetSomeProductsQuery request, CancellationToken cancellationToken)
         {
             var totalCount = _productReadRepository.GetAll(false).Count();
             var result = _productReadRepository.GetAll(false).Select(p => new
@@ -33,8 +34,10 @@ namespace MiniETrade.Application.Features.Products.Queries
                 p.CreatedDate,
                 p.UpdatedDate
             }).Skip(request.Page * request.Size).Take(request.Size);
-            
-            return new GetAllProductsQueryResponse
+
+            //TODO-HUS yukarıya Skip ve Take yazılmış ama bunlara gerek yok. Pageable yapısına geçelim.
+
+            return new GetSomeProductsQueryResponse
             {
                 TotalCount = totalCount,
                 Products = result
@@ -42,9 +45,16 @@ namespace MiniETrade.Application.Features.Products.Queries
         }
     }
 
-    public class GetAllProductsQueryResponse
+    public class GetSomeProductsQueryResponse
     {
         public object Products { get; set; }
         public int TotalCount { get; set; }
+    }
+
+    //TODO-HUS yazılmış bir PageableQueryRequest abstract class var. Onun yerine bu recorda geçicez muhtemelen.
+    public record PageableQueryRequestRec
+    {
+        public int Page { get; set; } = 0;
+        public int Size { get; set; } = 5;
     }
 }

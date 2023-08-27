@@ -13,7 +13,7 @@ namespace MiniETrade.Domain.Entities
         public string Description { get; set; }
         public string Address { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; }
-        public virtual Customer Customer { get; set; }
+        public virtual ICollection<Product>? Products { get; set; }
+        public virtual Customer? Customer { get; set; }
     }
 }

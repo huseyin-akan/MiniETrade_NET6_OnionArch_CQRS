@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MiniETrade.Application.Repositories;
+using MiniETrade.Application.Repositories.Products;
 using MiniETrade.Domain.Entities;
 using System;
 using System.Collections.Generic;

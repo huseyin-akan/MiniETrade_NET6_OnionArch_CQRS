@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories
+namespace MiniETrade.Application.Repositories.Products
 {
     //TODO-HUS Repositories altındaki klasör isimlendirmelerini çoğul yapalım. Domain class nesneleriyle karışmasın.
     public interface IProductReadRepository :IReadRepository<Product>

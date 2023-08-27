@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories
+namespace MiniETrade.Application.Repositories.Orders
 {
-    public interface IProductImageFileReadRepository : IReadRepository<ProductImageFile>
+    public interface IOrderReadRepository : IReadRepository<Order>
     {
-
     }
 }

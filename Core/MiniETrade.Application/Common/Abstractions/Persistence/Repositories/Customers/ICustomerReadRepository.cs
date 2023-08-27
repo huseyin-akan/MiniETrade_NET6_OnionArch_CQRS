@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories
+namespace MiniETrade.Application.Repositories.Customers
 {
-    public interface IOrderReadRepository : IReadRepository<Order>
+    public interface ICustomerReadRepository : IReadRepository<Customer>
     {
     }
 }
