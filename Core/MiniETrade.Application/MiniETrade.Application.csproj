@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="BusinessRules\Products\" />
     <Folder Include="Features\AppUsers\Queries\" />
     <Folder Include="Features\ProductImageFiles\Queries\" />
   </ItemGroup>

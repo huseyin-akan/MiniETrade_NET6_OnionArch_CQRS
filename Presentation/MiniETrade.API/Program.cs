@@ -1,6 +1,8 @@
 ﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using MiniETrade.API.Middlewares.ExceptionHandling;
 using MiniETrade.Application;
 using MiniETrade.Application.Validators.Products;
 using MiniETrade.Infrastructure;
@@ -67,6 +69,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+ 
+if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage(); //TODO-HUS Bunu da bir test edelim bakam
+else app.UseMiddleware<GlobalExceptionHandler>(); //TODO-HUS bakalım çalışıyor mu kardeşimiz.
 
 app.UseStaticFiles();
 app.UseCors();
