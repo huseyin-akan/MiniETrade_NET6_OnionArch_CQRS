@@ -12,5 +12,7 @@ namespace MiniETrade.Application.Common.Abstractions
     {
         Task<CreateUserCommandResponse> CreateAsync(CreateUserCommandRequest request);
         //Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate, int addOnAccessTokenDate);
+
+        string? UserId { get; }
     }
 }

@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using MiniETrade.Application.BusinessRules;
+using MiniETrade.Application.Common.Behaviours;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,13 @@ namespace MiniETrade.Application
 
             //Böylece aşağıdaki kodda demiş olduk ki, BaseBusinessRuless'un çocuğu olan tüm tipleri IoC'ye ekle.
             serviceCollection.AddSubClassesOfType(Assembly.GetExecutingAssembly(), typeof(BaseBusinessRules));
+
+            serviceCollection.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+            serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionScopeBehaviour<,>));
+            serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
+            serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
         }
 
         //Assembly'de yani bu projede verilen tipi arayıp, buluyor ve onun bir instance'ını IoC'ye ekliyor.

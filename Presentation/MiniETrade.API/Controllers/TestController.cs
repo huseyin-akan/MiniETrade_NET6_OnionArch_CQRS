@@ -10,9 +10,9 @@ namespace MiniETrade.API.Controllers
     public class TestController : ControllerBase
     {
         private readonly ICachingService _cachingService;
-        private readonly IDistibutedCachingService _distibutedCacheService;
+        private readonly IDistributedCachingService _distibutedCacheService;
         private readonly IInMemoryCachingService _inMemoryCacheService;
-        public TestController(ICachingService cachingService, IDistibutedCachingService distibutedCacheService, IInMemoryCachingService inMemoryCacheService)
+        public TestController(ICachingService cachingService, IDistributedCachingService distibutedCacheService, IInMemoryCachingService inMemoryCacheService)
         {
             _cachingService = cachingService;
             _distibutedCacheService = distibutedCacheService;

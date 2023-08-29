@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MiniETrade.Application.Common.Abstractions.Transactions;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Application.Repositories.Products;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Features.Products.Commands
 {
-    public class CreateProductCommandRequest : IRequest<CreateProductCommandResponse>
+    public class CreateProductCommandRequest : IRequest<CreateProductCommandResponse>, ITransactionalRequest
     {
         public string Name { get; set; } = "";
         public int Stock { get; set; }

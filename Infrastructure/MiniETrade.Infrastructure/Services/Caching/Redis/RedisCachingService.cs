@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Infrastructure.Services.Caching.Redis
 {
-    public class RedisCachingService : IDistibutedCachingService
+    public class RedisCachingService : IDistributedCachingService
     {
         private readonly IDistributedCache _distributedCache;
         private readonly IConfiguration _configuration;
@@ -26,7 +26,6 @@ namespace MiniETrade.Infrastructure.Services.Caching.Redis
                 AbsoluteExpiration = DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Redis:Options:AbsoluteExpiration"])),
                 SlidingExpiration = TimeSpan.FromMinutes(Convert.ToDouble(_configuration["Redis:Options:SlidingExpiration"]))
             };
-            var asd = "asd";
         }
 
         public T? Get<T>(string key)

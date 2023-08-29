@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,29 @@ namespace MiniETrade.Domain.Exceptions.ProblemDetail
 {
     public class ValidationProblemDetails : ProblemDetails
     {
-        public object Errors { get; set; }
-        public override string ToString()
+        public IEnumerable<ValidationFailure>? Errors { get; set; }
+
+        private ValidationProblemDetails()
         {
-            return JsonConvert.SerializeObject(this);
+            Type = "https://example.com/probs/validation";
+            Title = "Validation error(s)";
+            Instance = "";
+            Status = StatusCodes.Status400BadRequest;
+        }
+
+        public ValidationProblemDetails(IEnumerable<ValidationFailure> errors) : this()
+        {
+            Errors = errors;
+            Detail = "Validation error(s)";
+        }
+
+        public ValidationProblemDetails(IEnumerable<ValidationFailure> errors, string message) : this(errors)
+        {
+            Detail = message;
+        }
+        public ValidationProblemDetails(string message) : this()
+        {
+            Detail = message;
         }
     }
 }

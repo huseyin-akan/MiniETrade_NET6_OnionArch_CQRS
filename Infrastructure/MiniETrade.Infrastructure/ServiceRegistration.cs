@@ -23,13 +23,13 @@ namespace MiniETrade.Infrastructure
         public static void AddInfrastructureServices(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
             serviceCollection.AddScoped<IStorageService, StorageService>();
-            serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
+            serviceCollection.AddScoped<ITokenHelper, TokenHelper>();
             //serviceCollection.AddScoped<IMQPublisherService, RabbitMQService>(); TODO-HUS bu servisler şimdilik kapatıldı. Şirket networkünden clouda bağlanamıyorum.
             //serviceCollection.AddScoped<IMQConsumerService, RabbitMQService>();
             //serviceCollection.AddScoped<IMassTransitService, MassTransitService>(); 
 
             serviceCollection.AddScoped<ICachingService, InMemoryCachingService>();
-            serviceCollection.AddScoped<IDistibutedCachingService, RedisCachingService>();
+            serviceCollection.AddScoped<IDistributedCachingService, RedisCachingService>();
             serviceCollection.AddScoped<IInMemoryCachingService, InMemoryCachingService>();
             serviceCollection.AddStackExchangeRedisCache( options => options.Configuration = configuration["Redis:Uri"]);
         }

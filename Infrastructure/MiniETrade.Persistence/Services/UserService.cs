@@ -12,7 +12,7 @@ namespace MiniETrade.Persistence.Services
 {
     public class UserService : IUserService
     {
-        readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         public UserService(UserManager<AppUser> userManager)
         {
             _userManager = userManager;

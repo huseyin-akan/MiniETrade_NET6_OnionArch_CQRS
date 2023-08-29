@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Common.Abstractions.Caching
 {
-    public interface ICachingService
+    public interface ICacheRemoverRequest
     {
-        T? Get<T>(string key);
-        void Set<T>(string key, T value);
+        string? CacheKey { get; }
+        bool BypassCache { get; }
+        string? CacheGroupKey { get; }
     }
 }
