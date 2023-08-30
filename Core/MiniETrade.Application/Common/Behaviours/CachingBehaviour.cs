@@ -26,16 +26,13 @@ namespace MiniETrade.Application.Common.Behaviours
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            if (request.BypassCache)
-            {
-                return await next();
-            }
+            if (request.BypassCache) return await next();
 
             TResponse response;
-            byte[]? cachedResponse = await _cachingService.GetAsync(request.CacheKey, cancellationToken);
-            if (cachedResponse != null)
+            var cachedResponse = _cachingService.Get<TResponse>(request.CacheKey);
+            if (cachedResponse is not null)
             {
-                response = JsonSerializer.Deserialize<TResponse>(Encoding.Default.GetString(cachedResponse));
+                response = cachedResponse;
                 _logger.LogInformation($"Fetched from Cache -> {request.CacheKey}");
             }
             else
@@ -46,19 +43,12 @@ namespace MiniETrade.Application.Common.Behaviours
             return response;
         }
 
-        private async Task<TResponse?> GetResponseAndAddToCache(
-            TRequest request,
-            RequestHandlerDelegate<TResponse> next,
-            CancellationToken cancellationToken)
+        private async Task<TResponse> GetResponseAndAddToCache(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             TResponse response = await next();
 
-            TimeSpan slidingExpiration = request.SlidingExpiration ?? TimeSpan.FromDays(_cacheSettings.SlidingExpiration);
-            DistributedCacheEntryOptions cacheOptions = new() { SlidingExpiration = slidingExpiration };
+            _cachingService.Set(request.CacheKey, response);
 
-            byte[] serializedData = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(response));
-
-            await _cachingService.SetAsync(request.CacheKey, serializedData, cacheOptions, cancellationToken);
             _logger.LogInformation($"Added to Cache -> {request.CacheKey}");
 
             if (request.CacheGroupKey != null)
@@ -106,7 +96,5 @@ namespace MiniETrade.Application.Common.Behaviours
             );
             _logger.LogInformation($"Added to Cache -> {request.CacheGroupKey}SlidingExpiration");
         }
-
-        
     }
 }

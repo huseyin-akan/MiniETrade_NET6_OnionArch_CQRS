@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MiniETrade.Application.Common.Abstractions;
+using MiniETrade.Application.Common.Abstractions.Caching;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Application.Repositories.Products;
 using System;
@@ -11,8 +12,13 @@ using System.Threading.Tasks;
 namespace MiniETrade.Application.Features.Products.Queries
 {
     //TODO-HUS buraya Include yaptığımız bir query yazıcaz.
-    public record GetSomeProductsQuery : PageableQueryRequestRec, IRequest<GetSomeProductsQueryResponse>
+    public record GetSomeProductsQuery : PageableQueryRequestRec, IRequest<GetSomeProductsQueryResponse>, ICachableRequest
     {
+        public string CacheKey => $"GetSomeProductQuery({Page},{Size})"; //It's important this value is unique
+
+        public bool BypassCache => false; //If true response wont be brought from cache.
+
+        public string? CacheGroupKey => throw new NotImplementedException();
     }
 
     public class GetSomeProductsQueryHandler : IRequestHandler<GetSomeProductsQuery, GetSomeProductsQueryResponse>
