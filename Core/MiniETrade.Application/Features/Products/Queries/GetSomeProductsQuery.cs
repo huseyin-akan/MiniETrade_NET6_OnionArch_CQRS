@@ -18,7 +18,7 @@ namespace MiniETrade.Application.Features.Products.Queries
 
         public bool BypassCache => false; //If true response wont be brought from cache.
 
-        public string? CacheGroupKey => throw new NotImplementedException();
+        public string? CacheGroupKey => "GetProducts";
     }
 
     public class GetSomeProductsQueryHandler : IRequestHandler<GetSomeProductsQuery, GetSomeProductsQueryResponse>

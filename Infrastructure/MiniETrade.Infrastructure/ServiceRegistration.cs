@@ -2,11 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniETrade.Application.Common.Abstractions.Caching;
+using MiniETrade.Application.Common.Abstractions.Security;
 using MiniETrade.Application.Common.Abstractions.Storage;
 using MiniETrade.Application.Common.Abstractions.Token;
 using MiniETrade.Infrastructure.Enums;
 using MiniETrade.Infrastructure.Services.Caching;
 using MiniETrade.Infrastructure.Services.Caching.Redis;
+using MiniETrade.Infrastructure.Services.Security;
 using MiniETrade.Infrastructure.Services.Storage;
 using MiniETrade.Infrastructure.Services.Storage.Local;
 using MiniETrade.Infrastructure.Services.Token;
@@ -31,7 +33,13 @@ namespace MiniETrade.Infrastructure
             serviceCollection.AddScoped<ICachingService, InMemoryCachingService>();
             serviceCollection.AddScoped<IDistributedCachingService, RedisCachingService>();
             serviceCollection.AddScoped<IInMemoryCachingService, InMemoryCachingService>();
+            
+            //Redis Caching
             serviceCollection.AddStackExchangeRedisCache( options => options.Configuration = configuration["Redis:Uri"]);
+            
+            //.Net In-memory Caching
+            serviceCollection.AddMemoryCache(); //In-memory cache kullanmak istersen.
+            //serviceCollection.AddDistributedMemoryCache(); //Inmemory distributed cache implementasyonu olarak kullanmak istersen. Ama illa çoklu makinede test yapacaksan gerekli yapıyı kur, mesela Redis kur.
         }
 
         //MassTransit Configuration

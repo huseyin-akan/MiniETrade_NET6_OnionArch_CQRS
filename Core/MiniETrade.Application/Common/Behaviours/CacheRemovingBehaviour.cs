@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Common.Behaviours
@@ -12,7 +13,7 @@ namespace MiniETrade.Application.Common.Behaviours
     public class CacheRemovingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, ICacheRemoverRequest
     {
-
+        //TODO-HUS burda kimi kullansak ki acep?? ICacheService'e geçicez buralarda.
         private readonly IDistributedCache _cache;
 
         public CacheRemovingBehavior(IDistributedCache cache)
@@ -20,12 +21,9 @@ namespace MiniETrade.Application.Common.Behaviours
             _cache = cache;
         }
 
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            if (request.BypassCache)
-            {
-                return await next();
-            }
+            if (request.BypassCache) return await next();
 
             TResponse response = await next();
 

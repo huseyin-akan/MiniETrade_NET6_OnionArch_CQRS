@@ -10,5 +10,7 @@ namespace MiniETrade.Application.Common.Abstractions.Caching
     {
         T? Get<T>(string key);
         void Set<T>(string key, T value);
+
+        //TODO-HUS buraya bir de remove eklicez brochka.
     }
 }

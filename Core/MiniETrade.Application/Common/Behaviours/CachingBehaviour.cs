@@ -35,10 +35,7 @@ namespace MiniETrade.Application.Common.Behaviours
                 response = cachedResponse;
                 _logger.LogInformation($"Fetched from Cache -> {request.CacheKey}");
             }
-            else
-            {
-                response = await GetResponseAndAddToCache(request, next, cancellationToken);
-            }
+            else response = await GetResponseAndAddToCache(request, next, cancellationToken);
 
             return response;
         }

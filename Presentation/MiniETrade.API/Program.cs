@@ -25,8 +25,7 @@ builder.Services.AddApplicationServices();
 //Stroge Management Registration
 builder.Services.AddStorage(StorageType.Local);
 
-builder.Services.AddMemoryCache(); //In-memory cache kullanmak istersen.
-builder.Services.AddDistributedMemoryCache(); //Inmemory distributed cache implementasyonu olarak kullanmak istersen. Ama illa çoklu makinede test yapacaksan gerekli yapıyı kur, mesela Redis kur.
+
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     //policy => policy.AllowAnyHeader().AllowAnyOrigin()  //her s.a diyen siteye girebilir şeklinde bir ayarlama.

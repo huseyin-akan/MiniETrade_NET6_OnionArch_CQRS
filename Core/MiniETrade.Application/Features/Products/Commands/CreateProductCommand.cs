@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MiniETrade.Application.Common.Abstractions.Caching;
 using MiniETrade.Application.Common.Abstractions.Transactions;
 using MiniETrade.Application.Repositories;
 using MiniETrade.Application.Repositories.Products;
@@ -10,11 +11,14 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Features.Products.Commands
 {
-    public class CreateProductCommandRequest : IRequest<CreateProductCommandResponse>, ITransactionalRequest
+    public class CreateProductCommandRequest : IRequest<CreateProductCommandResponse>, ITransactionalRequest, ICacheRemoverRequest
     {
         public string Name { get; set; } = "";
         public int Stock { get; set; }
         public float Price { get; set; }
+        public string? CacheKey => null;
+        public bool BypassCache => false;
+        public string? CacheGroupKey => "GetProducts";
     }
 
     public class CreateProductCommandRequestHandler : IRequestHandler<CreateProductCommandRequest, CreateProductCommandResponse>
