@@ -16,7 +16,7 @@ namespace MiniETrade.Application.Common.Behaviours
     where TRequest : IRequest<TResponse>, ICachableRequest
     {
         private readonly IDistributedCachingService _cachingService;
-        private readonly ILogger<CachingBehavior<TRequest, TResponse>> _logger;
+        private readonly ILogger<CachingBehavior<TRequest, TResponse>> _logger; //TODO-HUS console-logger kullanalım bakem
 
         public CachingBehavior(IDistributedCachingService cachingService, ILogger<CachingBehavior<TRequest, TResponse>> logger)
         {

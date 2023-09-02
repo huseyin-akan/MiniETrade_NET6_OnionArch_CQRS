@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MiniETrade.Application.Common.Abstractions.Identity;
 using MiniETrade.Application.Common.Abstractions.Security;
+using MiniETrade.Application.Common.Models;
 using MiniETrade.Application.DTOs;
 using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Domain.Exceptions;
@@ -10,8 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static MassTransit.Monitoring.Performance.BuiltInCounters;
-using static MassTransit.ValidationResultExtensions;
 
 namespace MiniETrade.Infrastructure.Services.Identity;
 
@@ -26,7 +26,9 @@ public class IdentityService : IIdentityService
     public IdentityService(
         UserManager<AppUser> userManager,
         IUserClaimsPrincipalFactory<AppUser> userClaimsPrincipalFactory,
-        IAuthorizationService authorizationService, RoleManager<IdentityRole> roleManager, ITokenHelper tokenHelper)
+        IAuthorizationService authorizationService, 
+        RoleManager<IdentityRole> roleManager,
+        ITokenHelper tokenHelper)
     {
         _userManager = userManager;
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
@@ -38,7 +40,6 @@ public class IdentityService : IIdentityService
     public async Task<string> GetUserNameAsync(string userId)
     {
         var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
-
         return user.UserName;
     }
 
@@ -75,7 +76,7 @@ public class IdentityService : IIdentityService
     public Task<IdentityResult> DeleteUserAsync(string userId)
     {
         var user = _userManager.Users.SingleOrDefault(u => u.Id == userId)
-            ?? throw new BiTasBusinessException(Messages.UserNotFound);
+            ?? throw new BusinessException("User Not Found"); //TODO-HUS Messages.UserNotFound
 
         return DeleteUserAsync(user);
     }
@@ -122,7 +123,7 @@ public class IdentityService : IIdentityService
 
         if (user is null)
         {
-            throw new NotFoundException("Kullanıcı Bulunamadı");
+            throw new BusinessException("Kullanıcı Bulunamadı"); //TODO-HUS magic strings.
         }
 
         var result = await _userManager.AddToRoleAsync(user, role);
@@ -132,7 +133,7 @@ public class IdentityService : IIdentityService
 
     public async Task<bool> CreateRole(string roleName)
     {
-        IdentityRole roleToCreate = new IdentityRole(roleName);
+        IdentityRole roleToCreate = new(roleName);
         var result = await _roleManager.CreateAsync(roleToCreate);
 
         return result.Succeeded;
@@ -151,7 +152,7 @@ public class IdentityService : IIdentityService
     public async Task UpdatePassword(Guid userId, string newPassword)
     {
         var userToUpdate = await GetUserByIdAsync(userId.ToString());
-        var token = await _userManager.GeneratePasswordResetTokenAsync(userToUpdate ?? throw new BusinessException(Messages.UserNotFound));
+        var token = await _userManager.GeneratePasswordResetTokenAsync(userToUpdate ?? throw new BusinessException("User Not Found")); //TODO-HUS magic strings
         await _userManager.ResetPasswordAsync(userToUpdate, token, newPassword);
     }
 

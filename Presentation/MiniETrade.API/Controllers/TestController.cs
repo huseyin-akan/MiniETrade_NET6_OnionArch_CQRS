@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MiniETrade.Application.Common.Abstractions.Caching;
-using MiniETrade.Application.Features.Products.Queries;
 
 namespace MiniETrade.API.Controllers
 {

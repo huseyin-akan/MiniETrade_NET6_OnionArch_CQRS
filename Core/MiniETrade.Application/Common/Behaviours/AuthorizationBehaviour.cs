@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using MiniETrade.Application.Common.Abstractions;
+using MiniETrade.Application.Common.Abstractions.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +11,14 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Common.Behaviours
 {
-    public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull, IRequest<TRequest>
+    public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull, IRequest<TResponse>
     {
-        private readonly IUser _user;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IIdentityService _identityService;
 
-        public AuthorizationBehaviour(
-            IUser user,
-            IIdentityService identityService)
+        public AuthorizationBehaviour(ICurrentUserService currentUserService, IIdentityService identityService)
         {
-            _user = user;
+            _currentUserService = currentUserService;
             _identityService = identityService;
         }
 
@@ -29,7 +29,7 @@ namespace MiniETrade.Application.Common.Behaviours
             if (authorizeAttributes.Any())
             {
                 // Must be authenticated user
-                if (_user.Id == null)
+                if (_currentUserService.GetUserId == null)
                 {
                     throw new UnauthorizedAccessException();
                 }
@@ -45,7 +45,7 @@ namespace MiniETrade.Application.Common.Behaviours
                     {
                         foreach (var role in roles)
                         {
-                            var isInRole = await _identityService.IsInRoleAsync(_user.Id, role.Trim());
+                            var isInRole = await _identityService.IsInRoleAsync(_currentUserService.GetUserId, role.Trim());
                             if (isInRole)
                             {
                                 authorized = true;
@@ -57,7 +57,8 @@ namespace MiniETrade.Application.Common.Behaviours
                     // Must be a member of at least one role in roles
                     if (!authorized)
                     {
-                        throw new ForbiddenAccessException();
+                        //throw new ForbiddenAccessException();
+                        throw new Exception("Cannot access et.c"); //TODO-HUS yukarıyı açıcaz.
                     }
                 }
 
@@ -67,11 +68,12 @@ namespace MiniETrade.Application.Common.Behaviours
                 {
                     foreach (var policy in authorizeAttributesWithPolicies.Select(a => a.Policy))
                     {
-                        var authorized = await _identityService.AuthorizeAsync(_user.Id, policy);
+                        var authorized = await _identityService.AuthorizeAsync(_currentUserService.GetUserId, policy);
 
                         if (!authorized)
                         {
-                            throw new ForbiddenAccessException();
+                            //throw new ForbiddenAccessException();
+                            throw new Exception("Cannot access et.c"); //TODO-HUS yukarıyı açıcaz.
                         }
                     }
                 }

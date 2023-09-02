@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MiniETrade.Application.Common.Abstractions;
+using MiniETrade.Application.Common.Abstractions.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,22 +20,21 @@ namespace MiniETrade.Application.Features.AppUsers.Commands
 
     public class CreateUserCommandRequestHandler :IRequestHandler<CreateUserCommandRequest, CreateUserCommandResponse>
     {
-        readonly IUserService _userService;
-        public CreateUserCommandRequestHandler(IUserService userService)
+        readonly IIdentityService _identityService;
+        public CreateUserCommandRequestHandler(IIdentityService identityService)
         {
-            _userService = userService;
+            _identityService = identityService;
         }
 
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
-            var response = await _userService.CreateAsync(new()
+            var response = await _identityService.CreateUserAsync(new()
             {
                 Email = request.Email,
                 NameSurname = request.NameSurname,
                 Password = request.Password,
-                PasswordConfirm = request.PasswordConfirm,
-                Username = request.Username,
-            });
+                UserName = request.Username,
+            }, request.PasswordConfirm);
 
             return new()
             {

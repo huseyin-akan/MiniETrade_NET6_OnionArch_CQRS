@@ -10,5 +10,6 @@ namespace MiniETrade.Domain.Entities.Identity
     public class AppUser : IdentityUser<string>
     {
         public string NameSurname { get; set; }
+        public bool Status { get; set; }
     }
 }

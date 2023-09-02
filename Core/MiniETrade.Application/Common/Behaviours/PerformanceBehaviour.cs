@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using MiniETrade.Application.Common.Abstractions;
+using MiniETrade.Application.Common.Abstractions.Identity;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,18 +15,18 @@ namespace MiniETrade.Application.Common.Behaviours
     {
         private readonly Stopwatch _timer;
         private readonly ILogger<TRequest> _logger;
-        private readonly IUser _user;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IIdentityService _identityService;
 
         public PerformanceBehaviour(
             ILogger<TRequest> logger,
-            IUser user,
+            ICurrentUserService currentUserService,
             IIdentityService identityService)
         {
             _timer = new Stopwatch();
 
             _logger = logger;
-            _user = user;
+            _currentUserService = currentUserService;
             _identityService = identityService;
         }
 
@@ -41,7 +43,7 @@ namespace MiniETrade.Application.Common.Behaviours
             if (elapsedMilliseconds > 500)
             {
                 var requestName = typeof(TRequest).Name;
-                var userId = _user.Id ?? string.Empty;
+                var userId = _currentUserService.GetUserId ?? string.Empty;
                 var userName = string.Empty;
 
                 if (!string.IsNullOrEmpty(userId))

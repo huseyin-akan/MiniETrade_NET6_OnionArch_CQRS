@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Common.Abstractions
 {
-    public interface IUserService
+    public interface ICurrentUserService
     {
-        Task<CreateUserCommandResponse> CreateAsync(CreateUserCommandRequest request);
-        //Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate, int addOnAccessTokenDate);
+        string? GetUserId { get; }
 
-        string? UserId { get; }
+        string? GetUserName { get; }
+
+        string? GetUserMail { get; }
     }
 }

@@ -22,15 +22,10 @@ builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
-//Stroge Management Registration
-builder.Services.AddStorage(StorageType.Local);
-
-
-
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     //policy => policy.AllowAnyHeader().AllowAnyOrigin()  //her s.a diyen siteye girebilir şeklinde bir ayarlama.
     policy => policy.WithOrigins("http://localhost:4200/", "https://localhost:4200/").AllowAnyHeader().AllowAnyMethod() //böylece sadece burdaki arkadaþlar istek atabilirler API'ye.
-)) ;
+));
 
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>()) //Kendi yazdığımız custom filter'ı devreye sokuyoruz.
     .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>()) //Böylece Application assembly'sindeki tüm Validator

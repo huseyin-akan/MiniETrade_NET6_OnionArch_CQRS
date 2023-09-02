@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MiniETrade.Application.Common.Models;
+using MiniETrade.Application.DTOs;
 using MiniETrade.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,7 @@ namespace MiniETrade.Application.Common.Abstractions.Identity
         Task<bool> AuthorizeAsync(string userId, string policyName);
         Task<bool> AddUserToRole(string userId, string role);
         Task<bool> CheckPasswordAsync(AppUser user, string password);
-        Task<AccessToken> CreateAccessToken(AppUser user);
+        Task<Token> CreateAccessToken(AppUser user);
         Task<bool> CreateRole(string roleName);
         Task<(Result Result, string UserId)> CreateUserAsync(AppUser user, string password);
         Task<IdentityResult> DeleteUserAsync(string userId);
