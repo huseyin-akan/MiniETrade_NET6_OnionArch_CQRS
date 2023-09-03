@@ -16,7 +16,7 @@ namespace MiniETrade.Application.BusinessRules.Products
             _productReadRepository = productReadRepository;
         }
 
-        public async Task CheckIfProductNameIsDublicate(string productName)
+        public async Task CheckIfProductNameIsDuplicate(string productName)
         {
             var product = await _productReadRepository.GetAsync(p => p.Name == productName);
             if (product is not null) throw new BusinessException("Please choose another product name. This product name is already used for another product. Product Id : " + product.Id);

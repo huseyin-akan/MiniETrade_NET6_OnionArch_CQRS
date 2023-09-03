@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MiniETrade.Application.BusinessRules.AppUsers;
 using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Common.Abstractions.Identity;
 using MiniETrade.Domain.Exceptions;
@@ -23,16 +24,19 @@ namespace MiniETrade.Application.Features.AppUsers.Commands
 
     public class CreateUserCommandRequestHandler :IRequestHandler<CreateUserCommandRequest, CreateUserCommandResponse>
     {
-        readonly IIdentityService _identityService;
-        public CreateUserCommandRequestHandler(IIdentityService identityService)
+        private readonly IIdentityService _identityService;
+        private readonly AppUserBusinessRules _appUserBusinessRules;
+
+        public CreateUserCommandRequestHandler(IIdentityService identityService, AppUserBusinessRules appUserBusinessRules)
         {
             _identityService = identityService;
+            _appUserBusinessRules = appUserBusinessRules;
         }
 
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
 
-            if (request.Password != request.PasswordConfirm) throw new BusinessException("Şifreler uyuşmuyor."); //TODO-HUS magic string, business rules olarak ayır.
+            AppUserBusinessRules.CheckIfPasswordMatches(request.Password, request.PasswordConfirm); 
 
             var response = await _identityService.CreateUserAsync(new()
             {
