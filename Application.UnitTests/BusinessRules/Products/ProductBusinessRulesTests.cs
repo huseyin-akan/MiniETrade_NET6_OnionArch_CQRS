@@ -5,6 +5,7 @@ using MiniETrade.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ public class ProductBusinessRulesTests
     {
         var productName = "ProductNameToTest";
         Product? productToReturn = new() { Id = Guid.NewGuid() };
-        A.CallTo(() => _productReadRepository.GetAsync(p => p.Name == productName)).Returns(Task.FromResult(productToReturn));
+        A.CallTo(() => _productReadRepository.GetAsync(A<Expression<Func<Product, bool>>>._))!.Returns(Task.FromResult(productToReturn));
 
         // Act and Assert
         await Assert.ThrowsAsync<BusinessException>(async () => await _productBusinessRules.CheckIfProductNameIsDuplicate(productName)); 
@@ -36,7 +37,7 @@ public class ProductBusinessRulesTests
     {
         var productName = "ProductNameToTest";
         Product? product = null;
-        A.CallTo(() => _productReadRepository.GetAsync(p => p.Name == productName)).Returns(Task.FromResult(product));
+        A.CallTo(() => _productReadRepository.GetAsync(A<Expression<Func<Product, bool>>>._)).Returns(Task.FromResult(product));
 
         await FluentActions.Invoking(async () => await _productBusinessRules.CheckIfProductNameIsDuplicate(productName))
         .Should().NotThrowAsync();
