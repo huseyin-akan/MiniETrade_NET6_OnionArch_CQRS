@@ -8,34 +8,37 @@ namespace MiniETrade.API.Controllers
     public class TestController : ControllerBase
     {
         private readonly ICachingService _cachingService;
-        private readonly IDistributedCachingService _distibutedCacheService;
-        private readonly IInMemoryCachingService _inMemoryCacheService;
-        public TestController(ICachingService cachingService, IDistributedCachingService distibutedCacheService, IInMemoryCachingService inMemoryCacheService)
+        public TestController(ICachingService cachingService)
         {
             _cachingService = cachingService;
-            _distibutedCacheService = distibutedCacheService;
-            _inMemoryCacheService = inMemoryCacheService;
         }
 
         [HttpGet("husotest")]
-        public IActionResult AddCaching()
+        public async Task<IActionResult> AddCaching()
         {
-            _distibutedCacheService.SetString("huso1", "husokanuslaşmaktır.");
-            _distibutedCacheService.Set("husoObj1", new HusoRecord("record1", 31, DateTime.Now));
-            _inMemoryCacheService.Set("huso2", "husokanuslaşmaktır.2");
-            _inMemoryCacheService.Set("husoObj2", new HusoRecord("record2", 32, DateTime.Now));
+            await _cachingService.SetAsync("huso1", "husokanuslaşmaktır.");
+            await _cachingService.SetAsync("husoObj1", new HusoRecord("record1", 31, DateTime.Now));
+            await _cachingService.SetAsync("huso2", "husokanuslaşmaktır.2");
+            await _cachingService.SetAsync("husoObj2", new HusoRecord("record2", 32, DateTime.Now));
             return Ok();
         }
 
         [HttpGet("husogettest")]
-        public IActionResult GetCaching()
+        public async Task<IActionResult> GetCaching()
         {
-            var result1 = _distibutedCacheService.GetString("huso1");
-            var result2 = _distibutedCacheService.Get<HusoRecord>("husoObj1");
-            var result3 = _distibutedCacheService.Get<string>("huso2");
-            var result4 = _distibutedCacheService.Get<HusoRecord>("husoObj2");
+            var result1 = await _cachingService.GetAsync<string>("huso1");
+            var result2 = await _cachingService.GetAsync<HusoRecord>("husoObj1");
+            await _cachingService.RemoveAsync("huso2");
+            var result3 = await _cachingService.GetAsync<string>("huso2");
+            var result4 = await _cachingService.GetAsync<HusoRecord>("husoObj2");
 
-            return Ok((result1, result2, result3, result4));
+            return Ok( new
+            {
+                huso1 = result1,
+                huso2 = result2,
+                huso3 = result3,
+                huso4 = result4
+            } );
         }
     }
 }

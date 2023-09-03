@@ -24,13 +24,13 @@ namespace MiniETrade.Application.Common.Behaviours
 
         public LoggingBehaviour(ILoggerFactory loggerFactory)
         {
-            _loggerService = loggerFactory.CreateLogger(LoggerType.EFLogger);
+            _loggerService = loggerFactory.GetLogger(LoggerType.EFLogger);
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
             var response = await next();
-            _loggerService.Log(typeof(TRequest), request, response);
+            await _loggerService.LogResponse(request, response);
 
             return response;
         }

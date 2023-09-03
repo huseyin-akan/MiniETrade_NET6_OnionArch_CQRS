@@ -14,9 +14,9 @@ namespace MiniETrade.Persistence.Persistence
 {
     public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     {
-        private readonly ETicaretAPIDbContext _context;
+        private readonly BaseDbContext _context;
 
-        public ReadRepository(ETicaretAPIDbContext context)
+        public ReadRepository(BaseDbContext context)
         {
             _context = context;
         }

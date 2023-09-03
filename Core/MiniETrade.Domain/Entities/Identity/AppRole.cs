@@ -9,6 +9,7 @@ namespace MiniETrade.Domain.Entities.Identity
 {
     public class AppRole : IdentityRole<string>
     {
-
+        public AppRole(string role) : base(role)
+        {}
     }
 }

@@ -1,13 +1,16 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Common.Abstractions.Caching;
+using MiniETrade.Application.Common.Abstractions.Identity;
 using MiniETrade.Application.Common.Abstractions.Logging;
 using MiniETrade.Application.Common.Abstractions.Security;
 using MiniETrade.Application.Common.Abstractions.Storage;
 using MiniETrade.Infrastructure.Enums;
+using MiniETrade.Infrastructure.Services;
 using MiniETrade.Infrastructure.Services.Caching;
-using MiniETrade.Infrastructure.Services.Caching.Redis;
+using MiniETrade.Infrastructure.Services.Identity;
 using MiniETrade.Infrastructure.Services.Logging;
 using MiniETrade.Infrastructure.Services.Logging.Loggers;
 using MiniETrade.Infrastructure.Services.Security;
@@ -31,15 +34,18 @@ public static class ServiceRegistration
         //serviceCollection.AddScoped<IMQConsumerService, RabbitMQService>();
         //serviceCollection.AddScoped<IMassTransitService, MassTransitService>(); 
 
-        serviceCollection.AddScoped<ICachingService, InMemoryCachingService>();
-        serviceCollection.AddScoped<IDistributedCachingService, RedisCachingService>();
-        serviceCollection.AddScoped<IInMemoryCachingService, InMemoryCachingService>();
-        
+        serviceCollection.AddScoped<ICachingService, DistributedCachingService>();
+        serviceCollection.AddScoped<IIdentityService, IdentityService>();
+
+        serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
+
+
         //Redis Caching
-        serviceCollection.AddStackExchangeRedisCache( options => options.Configuration = configuration["Redis:Uri"]);            
-        //.Net In-memory Caching
-        serviceCollection.AddMemoryCache(); //In-memory cache kullanmak istersen.
-        //serviceCollection.AddDistributedMemoryCache(); //Inmemory distributed cache implementasyonu olarak kullanmak istersen. Ama illa çoklu makinede test yapacaksan gerekli yapıyı kur, mesela Redis kur.
+        //serviceCollection.AddStackExchangeRedisCache( options => {
+        //    options.Configuration = configuration["Redis:Uri"];
+        //    });            
+        //.Net In-memory distributed caching
+        serviceCollection.AddDistributedMemoryCache(); //Inmemory distributed cache implementasyonu olarak kullanmak istersen.
 
         //Logging
         serviceCollection.AddSingleton<ILoggerFactory, LoggerFactory>();
@@ -51,6 +57,9 @@ public static class ServiceRegistration
 
         //Stroge Management Registration
         serviceCollection.AddStorage(StorageType.Local);
+
+        //App-settings options
+        serviceCollection.Configure<DistributedCachingOptions>(configuration.GetSection("DistributedCachingOptions"));
     }
 
     //MassTransit Configuration
@@ -82,7 +91,7 @@ public static class ServiceRegistration
                 serviceCollection.AddScoped<IStorage, LocalStorage>();
                 break;
             case StorageType.Azure:
-                //serviceCollection.AddScoped<IStorage, AzureStorage>();
+                //serviceCollection.AddScoped<IStorage, AzureStorage>(); //TODO-HUS
                 break;
             case StorageType.AWS:
 

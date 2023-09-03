@@ -12,7 +12,7 @@ namespace MiniETrade.Persistence.Persistence
 {
     public class OrderReadRepository : ReadRepository<Order>, IOrderReadRepository
     {
-        public OrderReadRepository(ETicaretAPIDbContext context) : base(context)
+        public OrderReadRepository(BaseDbContext context) : base(context)
         {
 
         }

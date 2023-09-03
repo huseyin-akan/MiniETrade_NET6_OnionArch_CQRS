@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Common.Abstractions.Identity;
+using MiniETrade.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,11 @@ namespace MiniETrade.Application.Features.AppUsers.Commands
 {
     public class CreateUserCommandRequest : IRequest<CreateUserCommandResponse>
     {
-        public string NameSurname { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
+        public string PhoneNumber { get; set; }
         public string Password { get; set; }
         public string PasswordConfirm { get; set; }
     }
@@ -28,18 +31,28 @@ namespace MiniETrade.Application.Features.AppUsers.Commands
 
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
+
+            if (request.Password != request.PasswordConfirm) throw new BusinessException("Şifreler uyuşmuyor."); //TODO-HUS magic string, business rules olarak ayır.
+
             var response = await _identityService.CreateUserAsync(new()
             {
-                Email = request.Email,
-                NameSurname = request.NameSurname,
-                Password = request.Password,
+                Id = Guid.NewGuid().ToString(),
+                FirstName = request.FirstName,
+                LastName = request.LastName,
                 UserName = request.Username,
-            }, request.PasswordConfirm);
+                NormalizedUserName = request.Username.Normalize(),
+                Email = request.Email,
+                NormalizedEmail = request.Email.Normalize(),
+                EmailConfirmed = true,
+                LockoutEnabled = false,
+                PhoneNumber = request.PhoneNumber,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Status = true
+            }, request.Password);
 
             return new()
             {
-                Message = response.Message,
-                Succeeded = response.Succeeded,
+                Message = "User registered with userId: " + response,
             };
 
             //throw new UserCreateFailedException();
@@ -48,7 +61,6 @@ namespace MiniETrade.Application.Features.AppUsers.Commands
 
     public class CreateUserCommandResponse
     {
-        public bool Succeeded { get; set; }
         public string Message { get; set; }
     }
 }

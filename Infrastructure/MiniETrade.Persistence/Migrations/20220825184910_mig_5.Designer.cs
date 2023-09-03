@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace MiniETrade.Persistence.Migrations
 {
-    [DbContext(typeof(ETicaretAPIDbContext))]
+    [DbContext(typeof(BaseDbContext))]
     [Migration("20220825184910_mig_5")]
     partial class mig_5
     {

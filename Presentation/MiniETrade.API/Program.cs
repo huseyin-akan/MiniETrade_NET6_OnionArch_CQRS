@@ -1,14 +1,18 @@
 ﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MiniETrade.API.Middlewares.ExceptionHandling;
 using MiniETrade.Application;
 using MiniETrade.Application.Validators.Products;
+using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Infrastructure;
 using MiniETrade.Infrastructure.Enums;
 using MiniETrade.Infrastructure.Filters;
 using MiniETrade.Persistence;
+using MiniETrade.Persistence.Contexts;
 using System.Security.Claims;
 using System.Text;
 

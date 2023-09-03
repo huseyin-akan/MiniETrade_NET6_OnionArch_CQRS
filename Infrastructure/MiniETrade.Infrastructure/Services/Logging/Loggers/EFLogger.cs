@@ -11,22 +11,22 @@ namespace MiniETrade.Infrastructure.Services.Logging.Loggers
 {
     public class EFLogger : ILoggerService
     {
-        public void Log<TResponse>(Type requestType, IRequest<TResponse> request, TResponse response)
+        public Task LogException<TResponse>(IRequest<TResponse> request, Exception exception)
         {
-            var requestName = typeof(TRequest).Name;
-            var userId = _currentUserService.GetUserId ?? string.Empty;
-            string? userName = string.Empty;
-
-            if (!string.IsNullOrEmpty(userId))
-            {
-                userName = await _identityService.GetUserNameAsync(userId);
-            }
-
-            _logger.LogInformation("CleanArchitecture Request: {Name} {@UserId} {@UserName} {@Request}",
-                requestName, userId, userName, request);
+            throw new NotImplementedException();
         }
 
-        public void LogException<TResponse>(Type requestType, IRequest<TResponse> request, Exception exception)
+        public Task LogMessage<TResponse>(string logMessage, IRequest<TResponse> request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task LogResponse<TResponse>(IRequest<TResponse> request, TResponse response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task LogResponseWithMessage<TResponse>(string logMessage, IRequest<TResponse> request, TResponse response)
         {
             throw new NotImplementedException();
         }

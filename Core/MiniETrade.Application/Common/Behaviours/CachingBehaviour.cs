@@ -1,27 +1,26 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using MiniETrade.Application.Common.Abstractions.Caching;
+using MiniETrade.Application.Common.Abstractions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ILoggerFactory = MiniETrade.Application.Common.Abstractions.Logging.ILoggerFactory;
 
 namespace MiniETrade.Application.Common.Behaviours
 {
     public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, ICachableRequest
     {
-        private readonly IDistributedCachingService _cachingService;
-        private readonly ILogger<CachingBehavior<TRequest, TResponse>> _logger; //TODO-HUS console-logger kullanalım bakem
+        private readonly ICachingService _cachingService;
+        private readonly ILoggerService _loggerService; 
 
-        public CachingBehavior(IDistributedCachingService cachingService, ILogger<CachingBehavior<TRequest, TResponse>> logger)
+        public CachingBehavior(ICachingService cachingService, ILoggerFactory loggerFactory)
         {
             _cachingService = cachingService;
-            _logger = logger;
+            _loggerService = loggerFactory.GetLogger(LoggerType.ConsoleLogger);
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
@@ -29,11 +28,11 @@ namespace MiniETrade.Application.Common.Behaviours
             if (request.BypassCache) return await next();
 
             TResponse response;
-            var cachedResponse = _cachingService.Get<TResponse>(request.CacheKey);
+            var cachedResponse = await _cachingService.GetAsync<TResponse>(request.CacheKey);
             if (cachedResponse is not null)
             {
                 response = cachedResponse;
-                _logger.LogInformation($"Fetched from Cache -> {request.CacheKey}");
+                await _loggerService.LogResponseWithMessage($"Data brought from Cache -> {request.CacheKey}", request, response);
             }
             else response = await GetResponseAndAddToCache(request, next, cancellationToken);
 
@@ -44,54 +43,29 @@ namespace MiniETrade.Application.Common.Behaviours
         {
             TResponse response = await next();
 
-            _cachingService.Set(request.CacheKey, response);
+            await _cachingService.SetAsync(request.CacheKey, response);
 
-            _logger.LogInformation($"Added to Cache -> {request.CacheKey}");
+            await _loggerService.LogMessage($"Added to Cache -> {request.CacheKey}", request);
 
             if (request.CacheGroupKey != null)
-                await AddCacheKeyToGroup(request, slidingExpiration, cancellationToken);
+                await AddCacheKeyToGroup(request, cancellationToken);
 
             return response;
         }
 
-        private async Task AddCacheKeyToGroup(TRequest request, TimeSpan slidingExpiration, CancellationToken cancellationToken)
+        //We are adding caches to their group cache if they have, because if any of the cache group member changes, we want to remove all these cache members
+        private async Task AddCacheKeyToGroup(TRequest request, CancellationToken cancellationToken)
         {
-            byte[]? cacheGroupCache = await _cachingService.GetAsync(key: request.CacheGroupKey!, cancellationToken);
-            HashSet<string> cacheKeysInGroup;
-            if (cacheGroupCache != null)
-            {
-                cacheKeysInGroup = JsonSerializer.Deserialize<HashSet<string>>(Encoding.Default.GetString(cacheGroupCache))!;
-                if (!cacheKeysInGroup.Contains(request.CacheKey))
-                    cacheKeysInGroup.Add(request.CacheKey);
-            }
+            var cacheKeysInGroup = await _cachingService.GetAsync<HashSet<string>>(key: request.CacheGroupKey!, cancellationToken);
+            
+            if (cacheKeysInGroup != null && !cacheKeysInGroup.Contains(request.CacheKey))
+                cacheKeysInGroup.Add(request.CacheKey);
             else
                 cacheKeysInGroup = new HashSet<string>(new[] { request.CacheKey });
-            byte[] newCacheGroupCache = JsonSerializer.SerializeToUtf8Bytes(cacheKeysInGroup);
 
-            byte[]? cacheGroupCacheSlidingExpirationCache = await _cachingService.GetAsync(
-                key: $"{request.CacheGroupKey}SlidingExpiration",
-                cancellationToken
-            );
-            int? cacheGroupCacheSlidingExpirationValue = null;
-            if (cacheGroupCacheSlidingExpirationCache != null)
-                cacheGroupCacheSlidingExpirationValue = Convert.ToInt32(Encoding.Default.GetString(cacheGroupCacheSlidingExpirationCache));
-            if (cacheGroupCacheSlidingExpirationValue == null || slidingExpiration.TotalSeconds > cacheGroupCacheSlidingExpirationValue)
-                cacheGroupCacheSlidingExpirationValue = Convert.ToInt32(slidingExpiration.TotalSeconds);
-            byte[] serializeCachedGroupSlidingExpirationData = JsonSerializer.SerializeToUtf8Bytes(cacheGroupCacheSlidingExpirationValue);
-
-            DistributedCacheEntryOptions cacheOptions =
-                new() { SlidingExpiration = TimeSpan.FromSeconds(Convert.ToDouble(cacheGroupCacheSlidingExpirationValue)) };
-
-            await _cachingService.SetAsync(key: request.CacheGroupKey!, newCacheGroupCache, cacheOptions, cancellationToken);
-            _logger.LogInformation($"Added to Cache -> {request.CacheGroupKey}");
-
-            await _cachingService.SetAsync(
-                key: $"{request.CacheGroupKey}SlidingExpiration",
-                serializeCachedGroupSlidingExpirationData,
-                cacheOptions,
-                cancellationToken
-            );
-            _logger.LogInformation($"Added to Cache -> {request.CacheGroupKey}SlidingExpiration");
+            await _cachingService.SetAsync(key: request.CacheGroupKey!, cacheKeysInGroup, cancellationToken);
+            
+            await _loggerService.LogMessage($"Added to Cache -> {request.CacheGroupKey}", request);
         }
     }
 }

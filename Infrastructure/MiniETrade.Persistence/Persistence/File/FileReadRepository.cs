@@ -12,7 +12,7 @@ namespace MiniETrade.Persistence.Persistence
 {
     public class FileReadRepository : ReadRepository<File>, IFileReadRepository
     {
-        public FileReadRepository(ETicaretAPIDbContext context) : base(context)
+        public FileReadRepository(BaseDbContext context) : base(context)
         {
 
         }

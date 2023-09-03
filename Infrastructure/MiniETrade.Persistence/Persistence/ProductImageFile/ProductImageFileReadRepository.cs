@@ -12,7 +12,7 @@ namespace MiniETrade.Persistence.Persistence
 {
     public class ProductImageFileReadRepository : ReadRepository<ProductImageFile>, IProductImageFileReadRepository
     {
-        public ProductImageFileReadRepository(ETicaretAPIDbContext context) : base(context)
+        public ProductImageFileReadRepository(BaseDbContext context) : base(context)
         {
 
         }

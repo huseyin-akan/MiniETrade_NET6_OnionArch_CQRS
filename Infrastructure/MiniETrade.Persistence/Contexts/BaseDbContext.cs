@@ -13,9 +13,9 @@ using File = MiniETrade.Domain.Entities.File;
 
 namespace MiniETrade.Persistence.Contexts
 {
-    public class ETicaretAPIDbContext :IdentityDbContext<AppUser, AppRole, string>
+    public class BaseDbContext :IdentityDbContext<AppUser, AppRole, string>
     {
-        public ETicaretAPIDbContext(DbContextOptions options) : base(options)
+        public BaseDbContext(DbContextOptions options) : base(options)
         {
             Database.EnsureCreated();
         }

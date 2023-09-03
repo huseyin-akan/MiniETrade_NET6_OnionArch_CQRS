@@ -8,6 +8,6 @@ namespace MiniETrade.Application.Common.Abstractions.Logging
 {
     public interface ILoggerFactory
     {
-        ILoggerService CreateLogger(LoggerType loggerType);
+        ILoggerService GetLogger(LoggerType loggerType);
     }
 }

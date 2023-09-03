@@ -8,9 +8,8 @@ namespace MiniETrade.Application.Common.Abstractions.Caching
 {
     public interface ICachingService
     {
-        T? Get<T>(string key);
-        void Set<T>(string key, T value);
-
-        //TODO-HUS buraya bir de remove eklicez brochka.
+        Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default);
+        Task SetAsync<T>(string key, T value, CancellationToken cancellationToken = default);
+        Task RemoveAsync(string key, CancellationToken cancellationToken = default);
     }
 }

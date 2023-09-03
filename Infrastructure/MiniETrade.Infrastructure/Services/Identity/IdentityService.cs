@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MiniETrade.Application.Common.Abstractions.Identity;
 using MiniETrade.Application.Common.Abstractions.Security;
-using MiniETrade.Application.Common.Models;
+using MiniETrade.Application.Common.Exceptions;
 using MiniETrade.Application.DTOs;
 using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Domain.Exceptions;
@@ -20,14 +20,14 @@ public class IdentityService : IIdentityService
     private readonly UserManager<AppUser> _userManager;
     private readonly IUserClaimsPrincipalFactory<AppUser> _userClaimsPrincipalFactory;
     private readonly IAuthorizationService _authorizationService;
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly RoleManager<AppRole> _roleManager;
     private readonly ITokenHelper _tokenHelper;
 
     public IdentityService(
         UserManager<AppUser> userManager,
         IUserClaimsPrincipalFactory<AppUser> userClaimsPrincipalFactory,
         IAuthorizationService authorizationService, 
-        RoleManager<IdentityRole> roleManager,
+        RoleManager<AppRole> roleManager,
         ITokenHelper tokenHelper)
     {
         _userManager = userManager;
@@ -43,11 +43,11 @@ public class IdentityService : IIdentityService
         return user.UserName;
     }
 
-    public async Task<(Result Result, string UserId)> CreateUserAsync(AppUser user, string password)
+    public async Task<string> CreateUserAsync(AppUser user, string password)
     {
         var result = await _userManager.CreateAsync(user, password);
-
-        return (result.ToApplicationResult(), user.Id);
+        if (!result.Succeeded) throw new UserCreateFailedException(result.Errors);
+        return user.Id; 
     }
 
     public async Task<bool> IsInRoleAsync(string userId, string role)
@@ -133,7 +133,7 @@ public class IdentityService : IIdentityService
 
     public async Task<bool> CreateRole(string roleName)
     {
-        IdentityRole roleToCreate = new(roleName);
+        AppRole roleToCreate = new(roleName);
         var result = await _roleManager.CreateAsync(roleToCreate);
 
         return result.Succeeded;

@@ -18,7 +18,7 @@ namespace MiniETrade.Application.Common.Abstractions.Identity
         Task<bool> CheckPasswordAsync(AppUser user, string password);
         Task<Token> CreateAccessToken(AppUser user);
         Task<bool> CreateRole(string roleName);
-        Task<(Result Result, string UserId)> CreateUserAsync(AppUser user, string password);
+        Task<string> CreateUserAsync(AppUser user, string password);
         Task<IdentityResult> DeleteUserAsync(string userId);
         Task<IdentityResult> DeleteUserAsync(AppUser user);
         Task<AppUser> FindByEmailAsync(string email);

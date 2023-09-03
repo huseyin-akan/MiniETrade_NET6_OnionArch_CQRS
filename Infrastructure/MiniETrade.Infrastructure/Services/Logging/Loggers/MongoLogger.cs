@@ -10,12 +10,22 @@ namespace MiniETrade.Infrastructure.Services.Logging.Loggers
 {
     public class MongoLogger : ILoggerService
     {
-        public void Log<TResponse>(Type requestType, IRequest<TResponse> request, TResponse response)
+        public Task LogException<TResponse>(IRequest<TResponse> request, Exception exception)
         {
             throw new NotImplementedException();
         }
 
-        public void LogException<TResponse>(Type requestType, IRequest<TResponse> request, Exception exception)
+        public Task LogMessage<TResponse>(string logMessage, IRequest<TResponse> request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task LogResponse<TResponse>(IRequest<TResponse> request, TResponse response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task LogResponseWithMessage<TResponse>(string logMessage, IRequest<TResponse> request, TResponse response)
         {
             throw new NotImplementedException();
         }

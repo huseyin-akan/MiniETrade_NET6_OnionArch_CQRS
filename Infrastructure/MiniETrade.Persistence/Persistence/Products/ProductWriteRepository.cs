@@ -12,7 +12,7 @@ namespace MiniETrade.Persistence.Persistence.Products
 {  
     public class ProductWriteRepository : WriteRepository<Product>, IProductWriteRepository
     {
-        public ProductWriteRepository(ETicaretAPIDbContext context) : base(context)
+        public ProductWriteRepository(BaseDbContext context) : base(context)
         {
 
         }

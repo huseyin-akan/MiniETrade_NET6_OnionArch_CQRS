@@ -23,7 +23,7 @@ namespace MiniETrade.Persistence
     {    
         public static void AddPersistenceServices(this IServiceCollection services)
         {            
-            services.AddDbContext<ETicaretAPIDbContext>(options => options.UseNpgsql(ConfigurationHelper.ConnectionString) );
+            services.AddDbContext<BaseDbContext>(options => options.UseNpgsql(ConfigurationHelper.ConnectionString) );
             
             services.AddIdentity<AppUser, AppRole>(options =>
             {
@@ -32,7 +32,7 @@ namespace MiniETrade.Persistence
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<ETicaretAPIDbContext>();
+            }).AddEntityFrameworkStores<BaseDbContext>();
 
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
@@ -45,8 +45,6 @@ namespace MiniETrade.Persistence
             services.AddScoped<IFileReadRepository, FileReadRepository>();
             services.AddScoped<IFileWriteRepository, FileWriteRepository>();
             services.AddScoped<IProductAsyncRepository, ProductAsyncRepository>();
-
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
         }
     }
 }

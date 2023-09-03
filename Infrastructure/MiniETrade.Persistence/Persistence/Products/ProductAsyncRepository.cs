@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Persistence.Persistence.Products
 {
-    public class ProductAsyncRepository : EfAsyncRepository<Product, ETicaretAPIDbContext>,  IProductAsyncRepository
+    public class ProductAsyncRepository : EfAsyncRepository<Product, BaseDbContext>,  IProductAsyncRepository
     {
-        public ProductAsyncRepository(ETicaretAPIDbContext context) : base(context)
+        public ProductAsyncRepository(BaseDbContext context) : base(context)
         {
 
         }

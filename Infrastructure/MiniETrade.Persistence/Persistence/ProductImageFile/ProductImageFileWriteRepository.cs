@@ -12,7 +12,7 @@ namespace MiniETrade.Persistence.Persistence
 {
     public class ProductImageFileWriteRepository : WriteRepository<ProductImageFile>, IProductImageFileWriteRepository
     {
-        public ProductImageFileWriteRepository(ETicaretAPIDbContext context) : base(context)
+        public ProductImageFileWriteRepository(BaseDbContext context) : base(context)
         {
 
         }

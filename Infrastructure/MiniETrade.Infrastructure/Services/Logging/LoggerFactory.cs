@@ -18,7 +18,7 @@ namespace MiniETrade.Infrastructure.Services.Logging
             _serviceProvider = serviceProvider;
         }
 
-        public ILoggerService CreateLogger(LoggerType loggerType)
+        public ILoggerService GetLogger(LoggerType loggerType)
         {
             ILoggerService? logger = loggerType switch
             {

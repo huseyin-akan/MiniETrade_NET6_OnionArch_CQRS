@@ -24,7 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniETrade.API", "Presentat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MQConsumer", "MQConsumer", "{F2003AC8-53F6-46FE-A138-768DB139A408}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MQConsumerService", "MQConsumerService\MQConsumerService.csproj", "{447E3642-C3BB-4CA0-AD3F-39B0BE8D0F9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQConsumerService", "MQConsumerService\MQConsumerService.csproj", "{447E3642-C3BB-4CA0-AD3F-39B0BE8D0F9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{48FD6371-225E-46C2-B9FF-F7CC5329D6B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

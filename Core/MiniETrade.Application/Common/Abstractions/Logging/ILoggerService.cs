@@ -9,7 +9,9 @@ namespace MiniETrade.Application.Common.Abstractions.Logging
 {
     public interface ILoggerService
     {
-        void LogException<TResponse>(Type requestType, IRequest<TResponse> request, Exception exception); //TODO-HUS ilk parametre gereksiz olabilir.
-        void Log<TResponse>(Type requestType, IRequest<TResponse> request, TResponse response); //TODO-HUS ilk parametre gereksiz olabilir.
+        Task LogException<TResponse>(IRequest<TResponse> request, Exception exception);
+        Task LogResponse<TResponse>(IRequest<TResponse> request, TResponse response);
+        Task LogResponseWithMessage<TResponse>(string logMessage, IRequest<TResponse> request, TResponse response);
+        Task LogMessage<TResponse>(string logMessage, IRequest<TResponse> request);
     }
 }

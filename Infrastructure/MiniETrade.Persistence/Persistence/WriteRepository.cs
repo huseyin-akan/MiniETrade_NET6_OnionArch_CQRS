@@ -13,9 +13,9 @@ namespace MiniETrade.Persistence.Persistence
 {
     public class WriteRepository<T> : IWriteRepository<T> where T : BaseEntity
     {
-        private readonly ETicaretAPIDbContext _context;
+        private readonly BaseDbContext _context;
 
-        public WriteRepository(ETicaretAPIDbContext context)
+        public WriteRepository(BaseDbContext context)
         {
             _context = context;
         }

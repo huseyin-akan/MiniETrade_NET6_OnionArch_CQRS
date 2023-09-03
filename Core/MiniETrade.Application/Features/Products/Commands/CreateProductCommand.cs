@@ -54,6 +54,6 @@ namespace MiniETrade.Application.Features.Products.Commands
 
     public class CreateProductCommandResponse
     {
-
+        public int MyProperty { get; set; }
     }
 }

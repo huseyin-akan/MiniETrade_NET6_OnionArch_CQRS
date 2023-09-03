@@ -12,7 +12,7 @@ namespace MiniETrade.Persistence.Persistence
 {
     public class CustomerReadRepository : ReadRepository<Customer>, ICustomerReadRepository
     {
-        public CustomerReadRepository(ETicaretAPIDbContext context) :base(context)
+        public CustomerReadRepository(BaseDbContext context) :base(context)
         {
 
         }
