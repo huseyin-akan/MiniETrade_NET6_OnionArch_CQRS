@@ -12,10 +12,10 @@ namespace MiniETrade.Infrastructure.Filters
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (!context.ModelState.IsValid)
+            if (!context.ModelState.IsValid && context.ModelState.Count>0) //&& kısmını sonradan ekledik patlarsa diye yazıyorum.
             {
-                var errors = context.ModelState.Where( x => x.Value.Errors.Any() )
-                    .ToDictionary( x => x.Key, x => x.Value.Errors.Select(e => e.ErrorMessage) )
+                var errors = context.ModelState.Where( x => x.Value!.Errors.Any() ) //.Value kısmına ! ekledik. Aşağıya da aynısı.
+                    .ToDictionary( x => x.Key, x => x.Value!.Errors.Select(e => e.ErrorMessage) )
                     .ToArray();
 
                 context.Result = new BadRequestObjectResult(errors);

@@ -1,18 +1,12 @@
 ﻿using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MiniETrade.API.Middlewares.ExceptionHandling;
 using MiniETrade.Application;
 using MiniETrade.Application.Validators.Products;
-using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Infrastructure;
-using MiniETrade.Infrastructure.Enums;
 using MiniETrade.Infrastructure.Filters;
 using MiniETrade.Persistence;
-using MiniETrade.Persistence.Contexts;
 using System.Security.Claims;
 using System.Text;
 
@@ -53,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
             ValidAudience = builder.Configuration["Token:Audience"],
             ValidIssuer = builder.Configuration["Token:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!)),
             LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null && expires > DateTime.UtcNow,
 
             NameClaimType = ClaimTypes.Name //JWT üzerinde Name claimne karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.

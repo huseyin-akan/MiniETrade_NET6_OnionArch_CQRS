@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using File = MiniETrade.Domain.Entities.File;
@@ -49,6 +50,8 @@ namespace MiniETrade.Persistence.Contexts
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             //Assembly'de IEntityTypeConfiguration<T> interface'ini implement eden configuration classlarını ekler.
+
+            base.OnModelCreating(builder);
         }
     }
 }

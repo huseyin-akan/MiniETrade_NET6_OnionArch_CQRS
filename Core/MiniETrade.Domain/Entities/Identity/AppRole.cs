@@ -11,5 +11,8 @@ namespace MiniETrade.Domain.Entities.Identity
     {
         public AppRole(string role) : base(role)
         {}
+
+        public AppRole() : base()
+        {}
     }
 }
