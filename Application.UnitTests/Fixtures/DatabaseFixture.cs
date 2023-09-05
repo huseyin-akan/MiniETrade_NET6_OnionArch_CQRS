@@ -20,7 +20,6 @@ public class DatabaseFixture : IDisposable
             .Options;
 
         AppDbContext = new BaseDbContext(options);
-        AppDbContext.Database.EnsureCreated();
 
         InitializeAsync().GetAwaiter().GetResult();
     }

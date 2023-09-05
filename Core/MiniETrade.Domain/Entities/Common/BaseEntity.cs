@@ -9,6 +9,7 @@ namespace MiniETrade.Domain.Entities.Common
     public class BaseEntity
     {
         public Guid Id { get; set; }
+        public bool Status { get; set; }
         public DateTime CreatedDate{ get; set; }
         public virtual DateTime UpdatedDate { get; set; }
         public virtual DateTime? DeletedDate { get; set; }

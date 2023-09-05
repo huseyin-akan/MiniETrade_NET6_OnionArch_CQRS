@@ -31,7 +31,7 @@ namespace MiniETrade.Persistence.Persistence
 
         public async Task<T> GetByIdAsync(string Id, bool tracking = true)
         {
-            //=> await Table.FirstOrDefaultAsync(x => x.Id == Guid.Parse(Id));
+            //=> await Table.FirstOrDefaultAsync(x => x.Id == Guid.Parse(Id)); 
             //=> await Table.FindAsync(Guid.Parse(Id));
             var query  = Table.AsQueryable();
             if (!tracking) query = query.AsNoTracking();
