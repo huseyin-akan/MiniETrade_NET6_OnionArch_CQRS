@@ -24,7 +24,7 @@ public class ProductRepositoryTests : IClassFixture<DatabaseFixture>
     {
         _fixture = fixture;
         _productWriteRepository = new ProductWriteRepository(_fixture.AppDbContext);
-        _testProductId = new Guid("a9a2b1ce-ecd8-4828-b00b-94c6574f8fa7");
+        _testProductId = new Guid("a9a2b1ce-ecd8-4828-b00b-94c6574f8fa7"); 
         _productReadRepository = new ProductReadRepository(_fixture.AppDbContext);
     }
 

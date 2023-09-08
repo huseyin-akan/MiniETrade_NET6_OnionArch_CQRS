@@ -16,9 +16,6 @@ public class AppUserBusinessRulesTests
     [InlineData("ThistimeI'mveryserious!!", "ThistimeI'mveryserious!!", true)]
     public void PasswordShouldMatchWhenCreatingUser(string password, string passwordRepeat, bool expectedResult)
     {
-        //Arrange --> We get all variables we need for testing.
-        //No-arrange was necessary here.
-
         //Act --> We execute the test scenerios here
         var testResult = AppUserBusinessRules.CheckIfPasswordMatches(password, passwordRepeat);
 

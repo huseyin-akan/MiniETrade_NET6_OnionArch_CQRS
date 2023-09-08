@@ -24,21 +24,24 @@ public class ProductBusinessRulesTests
     [Fact]
     public async Task ShouldThrowBusinessExceptionIfProductNameWasTaken()
     {
+        //Arrange
         var productName = "ProductNameToTest";
         Product? productToReturn = new() { Id = Guid.NewGuid() };
         A.CallTo(() => _productReadRepository.GetAsync(A<Expression<Func<Product, bool>>>._))!.Returns(Task.FromResult(productToReturn));
 
-        // Act and Assert
+        //Act and Assert
         await Assert.ThrowsAsync<BusinessException>(async () => await _productBusinessRules.CheckIfProductNameIsDuplicate(productName)); 
     }
 
     [Fact]
     public async Task ShouldBeOkIfProductNameWasNotTaken()
     {
+        //Arrange
         var productName = "ProductNameToTest";
         Product? product = null;
         A.CallTo(() => _productReadRepository.GetAsync(A<Expression<Func<Product, bool>>>._)).Returns(Task.FromResult(product));
 
+        //Act and Assert
         await FluentActions.Invoking(async () => await _productBusinessRules.CheckIfProductNameIsDuplicate(productName))
         .Should().NotThrowAsync();
     }

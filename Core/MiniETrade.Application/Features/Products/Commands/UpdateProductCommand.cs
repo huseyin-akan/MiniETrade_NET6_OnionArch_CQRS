@@ -30,7 +30,7 @@ namespace MiniETrade.Application.Features.Products.Commands
 
         public async Task<UpdateProductCommandResponse> Handle(UpdateProductCommandRequest request, CancellationToken cancellationToken)
         {
-            var result = _productWriteRepository.Update(new()
+            var result = _productWriteRepository.Update(new() //TODO-HUS bu iğrenç kod da ne böyle. DB'den çeksene kardeşim product elemanını.
             {
                 Id = request.Id,
                 Name = request.Name,
