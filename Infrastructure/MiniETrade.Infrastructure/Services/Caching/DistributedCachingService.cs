@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MiniETrade.Application.Common.Abstractions.Caching;
+using MiniETrade.Application.Common.Abstractions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,19 @@ namespace MiniETrade.Infrastructure.Services.Caching
         public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
         {
             await _cache.RemoveAsync(key, cancellationToken);
+        }
+
+        //We are adding caches to their group cache if they have, because if any of the cache group member changes, we want to remove all these cache members
+        public async Task AddCacheKeyToGroup(ICachableRequest request, CancellationToken cancellationToken)
+        {
+            var cacheKeysInGroup = await GetAsync<HashSet<string>>(key: request.CacheGroupKey!, cancellationToken);
+
+            if (cacheKeysInGroup != null && !cacheKeysInGroup.Contains(request.CacheKey))
+                cacheKeysInGroup.Add(request.CacheKey);
+            else
+                cacheKeysInGroup = new HashSet<string>(new[] { request.CacheKey });
+
+            await SetAsync(key: request.CacheGroupKey!, cacheKeysInGroup, cancellationToken);
         }
     }
 }

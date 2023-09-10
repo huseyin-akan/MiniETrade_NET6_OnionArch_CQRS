@@ -1,4 +1,5 @@
-﻿using MiniETrade.Application.Common.Abstractions;
+﻿using FakeItEasy;
+using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Common.Abstractions.Caching;
 using MiniETrade.Application.Common.Abstractions.Logging;
 using MiniETrade.Application.Common.Behaviours;
@@ -36,18 +37,19 @@ public class CachingBehaviorTests
     public async Task CachingServiceShouldNotExecuteIfBypassIsTrue()
     {
         //Arrange
-        var request = new CachingTestRequest { BypassCache = true};
+        CachingTestRequest request = new(){ BypassCache = true};
+        CachingTestResponse responseFromNextMiddleware = new();
 
         //Act
-        var actual = await _cachingBehavior.Handle(request, CancellationToken.None, () => Task.FromResult(new CachingTestResponse() ) );
+        var actual = await _cachingBehavior.Handle(request, CancellationToken.None, () => Task.FromResult(responseFromNextMiddleware) );
 
-        //Arrange
+        //Assert
         actual.Should().NotBeNull();
         _cachingServiceMock.Verify(x => x.GetAsync<CachingTestResponse>(It.IsAny<string>(), CancellationToken.None), Times.Never);
     }
 
     [Fact]
-    public async Task ResponseShouldNotBeNullIfBypassCacheIsFalse()
+    public async Task CachingServiceShouldExecuteIfBypassIsFalse()
     {
         //Arrange
         var request = new CachingTestRequest { BypassCache = false };
@@ -55,13 +57,77 @@ public class CachingBehaviorTests
         //Act
         var actual = await _cachingBehavior.Handle(request, CancellationToken.None, () => Task.FromResult(new CachingTestResponse()));
 
-        //Arrange
+        //Assert
         actual.Should().NotBeNull();
         _cachingServiceMock.Verify(x => x.GetAsync<CachingTestResponse>(It.IsAny<string>(), CancellationToken.None), Times.Once() );
-        _cachingServiceMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<CachingTestResponse>(), CancellationToken.None), Times.Once() );
     }
 
-    //TODO-HUS write group-cache tests also. 
+    [Fact]
+    public async Task CachingServiceSetsCacheIfCacheResponseIsNull() 
+    {
+        //Arrange
+        var request = new CachingTestRequest { BypassCache = false };
+        CachingTestResponse? cacheResponse = null;
+        _cachingServiceMock.Setup(x => x.GetAsync<CachingTestResponse>(request.CacheKey, CancellationToken.None)).Returns(Task.FromResult(cacheResponse)!);
+
+        //Act
+        var actual = await _cachingBehavior.Handle(request, CancellationToken.None, () => Task.FromResult(new CachingTestResponse()));
+
+        //Assert
+        actual.Should().NotBeNull();
+        _cachingServiceMock.Verify(x => x.GetAsync<CachingTestResponse>(It.IsAny<string>(), CancellationToken.None), Times.Once());
+        _cachingServiceMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<CachingTestResponse>(), CancellationToken.None), Times.Once());
+    }
+
+    [Fact]
+    public async Task CachingServiceShouldNotSetCacheIfCacheResponseIsNotNull()
+    {
+        //Arrange
+        var request = new CachingTestRequest { BypassCache = false };
+        CachingTestResponse cacheResponse = new();
+        _cachingServiceMock.Setup(x => x.GetAsync<CachingTestResponse>(request.CacheKey, CancellationToken.None)).Returns(Task.FromResult(cacheResponse)!);
+
+        //Act
+        var actual = await _cachingBehavior.Handle(request, CancellationToken.None, () => Task.FromResult(new CachingTestResponse()));
+
+        //Assert
+        actual.Should().NotBeNull();
+        _cachingServiceMock.Verify(x => x.GetAsync<CachingTestResponse>(It.IsAny<string>(), CancellationToken.None), Times.Once());
+        _cachingServiceMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<CachingTestResponse>(), CancellationToken.None), Times.Never());
+    }
+
+    [Fact]
+    public async Task ResponseShouldBeBroughtFromCacheIfCacheResponseIsNotNull()
+    {
+        //Arrange
+        var request = new CachingTestRequest { BypassCache = false, CacheKey="some-key" };
+        CachingTestResponse cacheResponse = new();
+        _cachingServiceMock.Setup(x => x.GetAsync<CachingTestResponse>(request.CacheKey, CancellationToken.None)).Returns(Task.FromResult(cacheResponse)!);
+        CachingTestResponse responseFromNextMiddleware = new();
+
+        //Act
+        var actual = await _cachingBehavior.Handle(request, CancellationToken.None, () => Task.FromResult(responseFromNextMiddleware));
+
+        //Assert
+        Assert.True(ReferenceEquals(cacheResponse, actual));
+    }
+
+    [Theory]
+    [InlineData("", false)]
+    [InlineData(null, false)]
+    [InlineData("some-group-key", true)]
+    public async Task ShouldAddOrNotAddToGroupCaching(string cacheGroupKey, bool expected)
+    {
+        //Arrange
+        var request = new CachingTestRequest { BypassCache = false, CacheGroupKey = cacheGroupKey };
+        Times times = expected ? Times.Once() : Times.Never();
+        
+        //Act
+        var actual = await _cachingBehavior.Handle(request, CancellationToken.None, () => Task.FromResult(new CachingTestResponse()));
+
+        //Assert
+        _cachingServiceMock.Verify(x => x.AddCacheKeyToGroup(request, CancellationToken.None), times);
+    }
 }
 
 record CachingTestRequest : IRequest<CachingTestResponse>, ICachableRequest

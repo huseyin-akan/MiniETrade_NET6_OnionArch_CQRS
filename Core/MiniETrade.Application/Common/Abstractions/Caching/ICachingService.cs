@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace MiniETrade.Application.Common.Abstractions.Caching
     {
         Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default);
         Task SetAsync<T>(string key, T value, CancellationToken cancellationToken = default);
+        Task AddCacheKeyToGroup(ICachableRequest request, CancellationToken cancellationToken);
         Task RemoveAsync(string key, CancellationToken cancellationToken = default);
     }
 }

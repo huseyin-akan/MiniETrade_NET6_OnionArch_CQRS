@@ -49,24 +49,12 @@ where TResponse : IRequestResponse
 
         await _loggerService.LogMessage($"Added to Cache -> {request.CacheKey}", request);
 
-        if (request.CacheGroupKey != null)
-            await AddCacheKeyToGroup(request, cancellationToken);
+        if (!string.IsNullOrWhiteSpace(request.CacheGroupKey) )
+        {
+            await _cachingService.AddCacheKeyToGroup(request, cancellationToken);
+            await _loggerService.LogMessage($"Added to Cache -> {request.CacheGroupKey}", request);
+        }
 
         return response;
-    }
-
-    //We are adding caches to their group cache if they have, because if any of the cache group member changes, we want to remove all these cache members
-    private async Task AddCacheKeyToGroup(TRequest request, CancellationToken cancellationToken)
-    {
-        var cacheKeysInGroup = await _cachingService.GetAsync<HashSet<string>>(key: request.CacheGroupKey!, cancellationToken);
-        
-        if (cacheKeysInGroup != null && !cacheKeysInGroup.Contains(request.CacheKey))
-            cacheKeysInGroup.Add(request.CacheKey);
-        else
-            cacheKeysInGroup = new HashSet<string>(new[] { request.CacheKey });
-
-        await _cachingService.SetAsync(key: request.CacheGroupKey!, cacheKeysInGroup, cancellationToken);
-        
-        await _loggerService.LogMessage($"Added to Cache -> {request.CacheGroupKey}", request);
     }
 }
