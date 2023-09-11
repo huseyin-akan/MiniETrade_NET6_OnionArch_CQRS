@@ -13,9 +13,8 @@ public class AppUserBusinessRules : BaseBusinessRules
 {
     public static bool CheckIfPasswordMatches(string password, string passwordToCheck)
     {
-        if (password != passwordToCheck) return false;
-            //throw new BusinessException("Şifreler uyuşmuyor."); //TODO-HUS magic string
+        if (password != passwordToCheck) 
+            throw new BusinessException("Şifreler uyuşmuyor."); //TODO-HUS magic string
         return true; 
-        //TODO-HUS şimdilik test için böyle yazıyoruz, ama bu kontrol void dönecek. ve false ise hata fırlatacak.
     }
 }

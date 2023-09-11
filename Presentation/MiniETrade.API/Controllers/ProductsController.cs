@@ -37,11 +37,11 @@ namespace MiniETrade.API.Controllers
             await _productWriteRepository.AddRangeAsync(
                 new()
                 {
-                    new() { Id = Guid.NewGuid(), Name = "Product1", Price = 100, CreatedDate = DateTime.UtcNow, Stock = 10 },
-                    new() { Id = Guid.NewGuid(), Name = "Product2", Price = 200, CreatedDate = DateTime.UtcNow, Stock = 20 },
-                    new() { Id = Guid.NewGuid(), Name = "Product3", Price = 300, CreatedDate = DateTime.UtcNow, Stock = 30 },
-                    new() { Id = Guid.NewGuid(), Name = "Product4", Price = 400, CreatedDate = DateTime.UtcNow, Stock = 40 },
-                    new() { Id = Guid.NewGuid(), Name = "Product5", Price = 500, CreatedDate = DateTime.UtcNow, Stock = 50 }
+                    new() { Id = Guid.NewGuid(), Name = "Product1", Price = 100, Created = DateTime.UtcNow, Stock = 10 },
+                    new() { Id = Guid.NewGuid(), Name = "Product2", Price = 200, Created = DateTime.UtcNow, Stock = 20 },
+                    new() { Id = Guid.NewGuid(), Name = "Product3", Price = 300, Created = DateTime.UtcNow, Stock = 30 },
+                    new() { Id = Guid.NewGuid(), Name = "Product4", Price = 400, Created = DateTime.UtcNow, Stock = 40 },
+                    new() { Id = Guid.NewGuid(), Name = "Product5", Price = 500, Created = DateTime.UtcNow, Stock = 50 }
                 }
                 );
             await _productWriteRepository.SaveAsync();

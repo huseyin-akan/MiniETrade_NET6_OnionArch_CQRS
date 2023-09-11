@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MiniETrade.Application.Common.Abstractions;
+using MiniETrade.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,10 +20,18 @@ namespace MiniETrade.Infrastructure.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string? GetUserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        public Guid UserId
+        {
+            get{
+                string? userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId is null) return Guid.Empty;
+                return Guid.Parse(userId);
+            }
+        }
 
-        public string? GetUserName => _httpContextAccessor.HttpContext?.User?.FindFirstValue("username");
+        public string? UserName => _httpContextAccessor.HttpContext?.User?.FindFirstValue("username");
 
-        public string? GetUserMail => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
+        public string? UserMail => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
+
     }
 }

@@ -10,10 +10,11 @@ namespace MiniETrade.Application.Common.Abstractions
 {
     public interface ICurrentUserService
     {
-        string? GetUserId { get; }
 
-        string? GetUserName { get; }
+        Guid UserId { get; }
 
-        string? GetUserMail { get; }
+        string? UserName { get; }
+
+        string? UserMail { get; }
     }
 }

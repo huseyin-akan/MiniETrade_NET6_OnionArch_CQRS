@@ -34,7 +34,7 @@ public class ProductRepositoryTests : IClassFixture<DatabaseFixture>
         Product productToAdd = new()
         {
             Id = _testProductId,
-            CreatedDate = DateTime.Now,
+            Created = DateTime.Now,
             Name = "Mouse",
             Price = 12,
             Stock = 33

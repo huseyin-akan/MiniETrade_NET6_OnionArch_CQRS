@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Domain.Entities;
+using MiniETrade.Infrastructure.Services;
 using MiniETrade.Persistence.Contexts;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ namespace Application.UnitTests.Fixtures;
 public class DatabaseFixture : IDisposable
 {
     public BaseDbContext AppDbContext { get; private set; }
+    private readonly ICurrentUserService currentUserService;
 
     public DatabaseFixture()
     {
@@ -19,7 +22,8 @@ public class DatabaseFixture : IDisposable
             .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
             .Options;
 
-        AppDbContext = new BaseDbContext(options);
+        currentUserService = A.Fake<ICurrentUserService>();
+        AppDbContext = new BaseDbContext(options, currentUserService);
 
         InitializeAsync().GetAwaiter().GetResult();
     }
@@ -42,7 +46,7 @@ public class DatabaseFixture : IDisposable
             context.Products.Add(new Product
             {
                 Id = Guid.NewGuid(),
-                CreatedDate = DateTime.Now,
+                Created = DateTime.Now,
                 Name = "Computer",
                 Price = 10,
                 Stock = 30
@@ -51,7 +55,7 @@ public class DatabaseFixture : IDisposable
             context.Products.Add(new Product
             {
                 Id = Guid.NewGuid(),
-                CreatedDate = DateTime.Now,
+                Created = DateTime.Now,
                 Name = "Laptop",
                 Price = 20,
                 Stock = 70
@@ -60,7 +64,7 @@ public class DatabaseFixture : IDisposable
             context.Products.Add(new Product
             {
                 Id = Guid.NewGuid(),
-                CreatedDate = DateTime.Now,
+                Created = DateTime.Now,
                 Name = "Earphone",
                 Price = 15,
                 Stock = 130

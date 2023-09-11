@@ -114,7 +114,7 @@ public class EfAsyncRepository<TEntity, TContext> : IAsyncRepository<TEntity> wh
 
     public async Task<TEntity> UpdateAsync(TEntity entity)
     {
-        entity.UpdatedDate = DateTime.UtcNow;
+        entity.LastModified = DateTime.UtcNow;
         Context.Update(entity);
         await Context.SaveChangesAsync();
         return entity;
@@ -123,7 +123,7 @@ public class EfAsyncRepository<TEntity, TContext> : IAsyncRepository<TEntity> wh
     public async Task<ICollection<TEntity>> UpdateRangeAsync(ICollection<TEntity> entities)
     {
         foreach (TEntity entity in entities)
-            entity.UpdatedDate = DateTime.UtcNow;
+            entity.LastModified = DateTime.UtcNow;
         Context.UpdateRange(entities);
         await Context.SaveChangesAsync();
         return entities;
@@ -159,8 +159,8 @@ public class EfAsyncRepository<TEntity, TContext> : IAsyncRepository<TEntity> wh
 
     private async Task SetEntityAsSoftDeletedAsync(BaseEntity entity)
     {
-        if (entity.DeletedDate.HasValue) return;
-        entity.DeletedDate = DateTime.UtcNow;
+        if (entity.Deleted.HasValue) return;
+        entity.Deleted = DateTime.UtcNow;
 
         var navigations = Context
             .Entry(entity)
@@ -217,7 +217,7 @@ public class EfAsyncRepository<TEntity, TContext> : IAsyncRepository<TEntity> wh
             ?? throw new InvalidOperationException("CreateQuery<TElement> method is not found in IQueryProvider.");
         var queryProviderQuery =
             (IQueryable<object>)createQueryMethod.Invoke(query.Provider, parameters: new object[] { query.Expression })!;
-        return queryProviderQuery.Where(x => !((BaseEntity)x).DeletedDate.HasValue);
+        return queryProviderQuery.Where(x => !((BaseEntity)x).Deleted.HasValue);
     }
 
     protected async Task SetEntityAsDeletedAsync(IEnumerable<TEntity> entities, bool permanent)

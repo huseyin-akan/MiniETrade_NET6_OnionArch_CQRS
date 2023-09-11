@@ -42,8 +42,8 @@ namespace MiniETrade.Application.Features.Products.Queries
                 p.Name,
                 p.Stock,
                 p.Price,
-                p.CreatedDate,
-                p.UpdatedDate
+                p.Created,
+                p.LastModified
             }).Skip(request.Page * request.Size).Take(request.Size);
 
             //TODO-HUS yukarıya Skip ve Take yazılmış ama bunlara gerek yok. Pageable yapısına geçelim.

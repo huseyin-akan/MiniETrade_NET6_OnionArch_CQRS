@@ -2,7 +2,6 @@
 using MiniETrade.Application.BusinessRules.AppUsers;
 using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Common.Abstractions.Identity;
-using MiniETrade.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Features.AppUsers.Commands
 {
-    public class CreateUserCommandRequest : IRequest<CreateUserCommandResponse>
+    public record CreateUserCommandRequest : IRequest<CreateUserCommandResponse>
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -36,11 +35,19 @@ namespace MiniETrade.Application.Features.AppUsers.Commands
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
 
-            AppUserBusinessRules.CheckIfPasswordMatches(request.Password, request.PasswordConfirm); 
+            AppUserBusinessRules.CheckIfPasswordMatches(request.Password, request.PasswordConfirm);
+
+            //check if username was taken
+            //var userByUserName = await _identityService.FindByNameAsync(registerUserDto.Username);
+            //if (userByUserName != null) throw new BusinessException(Messages.UsernameAlreadyRegistered);
+
+            //check if email was taken
+            //var userByEmail = await _identityService.FindByEmailAsync(registerUserDto.Email);
+            //if (userByEmail != null) throw new BusinessException(Messages.EmailAlreadyRegistered);
 
             var response = await _identityService.CreateUserAsync(new()
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 UserName = request.Username,
@@ -54,17 +61,9 @@ namespace MiniETrade.Application.Features.AppUsers.Commands
                 Status = true
             }, request.Password);
 
-            return new()
-            {
-                Message = "User registered with userId: " + response,
-            };
-
-            //throw new UserCreateFailedException();
+            return new(Message: "User registered with userId: " + response);
         }
     }
 
-    public class CreateUserCommandResponse
-    {
-        public string Message { get; set; }
-    }
+    public record CreateUserCommandResponse(string Message) :IRequestResponse;
 }

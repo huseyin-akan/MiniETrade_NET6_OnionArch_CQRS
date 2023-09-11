@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Domain.Entities;
 using MiniETrade.Domain.Entities.Common;
 using MiniETrade.Domain.Entities.Identity;
@@ -14,11 +15,13 @@ using File = MiniETrade.Domain.Entities.File;
 
 namespace MiniETrade.Persistence.Contexts
 {
-    public class BaseDbContext :IdentityDbContext<AppUser, AppRole, string>
+    public class BaseDbContext :IdentityDbContext<AppUser, AppRole, Guid>
     {
-        public BaseDbContext(DbContextOptions options) : base(options)
+        private readonly ICurrentUserService _currentUserService;
+        public BaseDbContext(DbContextOptions options, ICurrentUserService currentUserService) : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated(); //TODO-HUS bu ne işe yarıyor bakalım. Migration yaparken hataya sebebiyet veriyor.
+            _currentUserService = currentUserService;
         }
 
         public DbSet<Product> Products { get; set; }
@@ -28,19 +31,26 @@ namespace MiniETrade.Persistence.Contexts
         public DbSet<ProductImageFile> ProductImageFiles { get; set; }
         public DbSet<InvoiceFile> InvoiceFiles { get; set; }
 
+
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var datas = ChangeTracker.Entries<BaseEntity>();
 
-            foreach (var data in datas )
+            foreach (var data in datas)
             {
-                _ = data.State switch
+                switch (data.State)
                 {
-                    EntityState.Added => data.Entity.CreatedDate = DateTime.UtcNow,
-                    EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow,
-                    EntityState.Deleted => data.Entity.DeletedDate = DateTime.UtcNow,
-                    _ => DateTime.UtcNow
-                };
+                    case EntityState.Added:
+                        data.Entity.CreatedBy = _currentUserService.UserId;
+                        data.Entity.Created = DateTime.Now;
+                        data.Entity.Status = true;
+                        break;
+
+                    case EntityState.Modified:
+                        data.Entity.LastModifiedBy = _currentUserService.UserId;
+                        data.Entity.LastModified = DateTime.Now;
+                        break;
+                }
             }
                 
             return await base.SaveChangesAsync(cancellationToken);

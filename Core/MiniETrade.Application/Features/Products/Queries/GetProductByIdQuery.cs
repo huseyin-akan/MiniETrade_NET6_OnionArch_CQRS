@@ -32,7 +32,7 @@ namespace MiniETrade.Application.Features.Products.Queries
                 Name = result.Name,
                 Price = result.Price,
                 Stock = result.Stock,
-                CreatedDate = result.CreatedDate
+                CreatedDate = result.Created
             };
         }
     }

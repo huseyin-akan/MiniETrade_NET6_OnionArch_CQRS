@@ -14,6 +14,6 @@ namespace MiniETrade.Domain.Entities
         public string Path { get; set; }
         
         [NotMapped]
-        public override DateTime UpdatedDate { get => base.UpdatedDate; set => base.UpdatedDate = value; }
+        public override DateTime LastModified { get => base.LastModified; set => base.LastModified = value; }
     }
 }

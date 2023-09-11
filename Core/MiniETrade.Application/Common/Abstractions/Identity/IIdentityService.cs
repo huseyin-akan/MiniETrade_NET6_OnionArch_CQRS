@@ -13,21 +13,21 @@ namespace MiniETrade.Application.Common.Abstractions.Identity
     public interface IIdentityService
     {
 
-        Task<bool> AuthorizeAsync(string userId, string policyName);
-        Task<bool> AddUserToRole(string userId, string role);
+        Task<bool> AuthorizeAsync(Guid userId, string policyName);
+        Task<bool> AddUserToRole(Guid userId, string role);
         Task<bool> CheckPasswordAsync(AppUser user, string password);
         Task<Token> CreateAccessToken(AppUser user);
         Task<bool> CreateRole(string roleName);
-        Task<string> CreateUserAsync(AppUser user, string password);
-        Task<IdentityResult> DeleteUserAsync(string userId);
+        Task<Guid> CreateUserAsync(AppUser user, string password);
+        Task<IdentityResult> DeleteUserAsync(Guid userId);
         Task<IdentityResult> DeleteUserAsync(AppUser user);
         Task<AppUser> FindByEmailAsync(string email);
         Task<AppUser> FindByNameAsync(string userName);
         List<AppUser> GetAllUsers();
         Task<IList<string>> GetRolesAsync(AppUser user);
-        Task<string> GetUserNameAsync(string userId);
-        Task<AppUser?> GetUserByIdAsync(string userId);
-        Task<bool> IsInRoleAsync(string userId, string role);
+        Task<string> GetUserNameAsync(Guid userId);
+        Task<AppUser?> GetUserByIdAsync(Guid userId);
+        Task<bool> IsInRoleAsync(Guid userId, string role);
         Task UpdatePassword(Guid userId, string newPassword);
         Task UpdateUser(AppUser user);
     }

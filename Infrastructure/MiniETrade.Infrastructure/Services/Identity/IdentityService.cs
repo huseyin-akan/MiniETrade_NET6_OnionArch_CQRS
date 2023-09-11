@@ -37,27 +37,27 @@ public class IdentityService : IIdentityService
         _tokenHelper = tokenHelper;
     }
 
-    public async Task<string> GetUserNameAsync(string userId)
+    public async Task<string> GetUserNameAsync(Guid userId)
     {
         var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
         return user.UserName;
     }
 
-    public async Task<string> CreateUserAsync(AppUser user, string password)
+    public async Task<Guid> CreateUserAsync(AppUser user, string password)
     {
         var result = await _userManager.CreateAsync(user, password);
         if (!result.Succeeded) throw new UserCreateFailedException(result.Errors);
         return user.Id; 
     }
 
-    public async Task<bool> IsInRoleAsync(string userId, string role)
+    public async Task<bool> IsInRoleAsync(Guid userId, string role)
     {
         var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
 
         return user != null && await _userManager.IsInRoleAsync(user, role);
     }
 
-    public async Task<bool> AuthorizeAsync(string userId, string policyName)
+    public async Task<bool> AuthorizeAsync(Guid userId, string policyName)
     {
         var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
 
@@ -73,7 +73,7 @@ public class IdentityService : IIdentityService
         return result.Succeeded;
     }
 
-    public Task<IdentityResult> DeleteUserAsync(string userId)
+    public Task<IdentityResult> DeleteUserAsync(Guid userId)
     {
         var user = _userManager.Users.SingleOrDefault(u => u.Id == userId)
             ?? throw new BusinessException("User Not Found"); //TODO-HUS Messages.UserNotFound
@@ -117,9 +117,9 @@ public class IdentityService : IIdentityService
         return accessToken;
     }
 
-    public async Task<bool> AddUserToRole(string userId, string role)
+    public async Task<bool> AddUserToRole(Guid userId, string role)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId.ToString() );
 
         if (user is null)
         {
@@ -144,14 +144,14 @@ public class IdentityService : IIdentityService
         return _userManager.Users.Where(u => u.Status).ToList();
     }
 
-    public Task<AppUser?> GetUserByIdAsync(string userId)
+    public Task<AppUser?> GetUserByIdAsync(Guid userId)
     {
-        return _userManager.Users.Where(u => u.Status && u.Id == userId.ToString()).FirstOrDefaultAsync();
+        return _userManager.Users.Where(u => u.Status && u.Id == userId).FirstOrDefaultAsync();
     }
 
     public async Task UpdatePassword(Guid userId, string newPassword)
     {
-        var userToUpdate = await GetUserByIdAsync(userId.ToString());
+        var userToUpdate = await GetUserByIdAsync(userId);
         var token = await _userManager.GeneratePasswordResetTokenAsync(userToUpdate ?? throw new BusinessException("User Not Found")); //TODO-HUS magic strings
         await _userManager.ResetPasswordAsync(userToUpdate, token, newPassword);
     }
