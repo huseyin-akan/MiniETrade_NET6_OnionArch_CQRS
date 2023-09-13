@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Products;
 using MiniETrade.Application.Repositories.Customers;
 using MiniETrade.Application.Repositories.Files;
@@ -21,9 +21,13 @@ namespace MiniETrade.Persistence
 {
     public static class PersistenceServiceRegistration
     {    
-        public static void AddPersistenceServices(this IServiceCollection services)
-        {            
-            services.AddDbContext<BaseDbContext>(options => options.UseNpgsql(ConfigurationHelper.ConnectionString) );
+        public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            //Postgre SQL için
+            //services.AddDbContext<BaseDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:PostgreSQL"]) );
+            
+            //Local MSSQL için
+            services.AddDbContext<BaseDbContext>(options => options.UseSqlServer(configuration["ConnectionStrings:LocalMSSQL"]));
             
             services.AddIdentity<AppUser, AppRole>(options =>
             {

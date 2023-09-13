@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddMassTransitRegistration(builder.Configuration); TODO-HUS şirket internetinde olunca hata veriyor. Kapattık şimdilik.
 
 // Add services to the container.
-builder.Services.AddPersistenceServices();
+builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
