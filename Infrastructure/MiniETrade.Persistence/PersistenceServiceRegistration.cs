@@ -24,10 +24,10 @@ namespace MiniETrade.Persistence
         public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
             //Postgre SQL için
-            //services.AddDbContext<BaseDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:PostgreSQL"]) );
+            services.AddDbContext<BaseDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:PostgreSQL"]) );
             
             //Local MSSQL için
-            services.AddDbContext<BaseDbContext>(options => options.UseSqlServer(configuration["ConnectionStrings:LocalMSSQL"]));
+            //services.AddDbContext<BaseDbContext>(options => options.UseSqlServer(configuration["ConnectionStrings:LocalMSSQL"]));
             
             services.AddIdentity<AppUser, AppRole>(options =>
             {

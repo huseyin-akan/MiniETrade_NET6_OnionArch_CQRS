@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using MiniETrade.Application.BusinessRules.AppUsers;
-using MiniETrade.Application.Common.Abstractions;
 using MiniETrade.Application.Common.Abstractions.Identity;
 using System;
 using System.Collections.Generic;
@@ -8,34 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Features.AppUsers.Commands
+namespace MiniETrade.Application.Features.AppUsers.Commands.CreateUser
 {
-    public record CreateUserCommandRequest : IRequest<CreateUserCommandResponse>
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Password { get; set; }
-        public string PasswordConfirm { get; set; }
-    }
-
-    public class CreateUserCommandRequestHandler :IRequestHandler<CreateUserCommandRequest, CreateUserCommandResponse>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserResponse>
     {
         private readonly IIdentityService _identityService;
         private readonly AppUserBusinessRules _appUserBusinessRules;
 
-        public CreateUserCommandRequestHandler(IIdentityService identityService, AppUserBusinessRules appUserBusinessRules)
+        public CreateUserCommandHandler(IIdentityService identityService, AppUserBusinessRules appUserBusinessRules)
         {
             _identityService = identityService;
             _appUserBusinessRules = appUserBusinessRules;
         }
 
-        public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
+        public async Task<CreateUserResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
 
-            AppUserBusinessRules.CheckIfPasswordMatches(request.Password, request.PasswordConfirm);
+            _appUserBusinessRules.CheckIfPasswordMatches(request.Password, request.PasswordConfirm);
 
             //check if username was taken
             //var userByUserName = await _identityService.FindByNameAsync(registerUserDto.Username);
@@ -64,6 +52,4 @@ namespace MiniETrade.Application.Features.AppUsers.Commands
             return new(Message: "User registered with userId: " + response);
         }
     }
-
-    public record CreateUserCommandResponse(string Message) :IRequestResponse;
 }

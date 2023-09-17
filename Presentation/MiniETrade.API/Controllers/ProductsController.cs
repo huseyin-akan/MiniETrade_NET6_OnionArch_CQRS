@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniETrade.Application.Features.ProductImageFiles.Commands;
 using MiniETrade.Application.Features.Products.Commands;
+using MiniETrade.Application.Features.Products.Commands.CreateProduct;
 using MiniETrade.Application.Features.Products.Queries;
 using MiniETrade.Application.Repositories.Products;
 using MiniETrade.Domain.Exceptions;
@@ -57,7 +58,7 @@ namespace MiniETrade.API.Controllers
 
         [HttpPost("addproduct")]
         [AllowAnonymous] //TODO-HUS
-        public async Task<IActionResult> AddProduct([FromBody] CreateProductCommandRequest request)
+        public async Task<IActionResult> AddProduct([FromBody] CreateProductCommand request)
         {
             await _mediator.Send(request);
             return StatusCode((int)HttpStatusCode.Created);

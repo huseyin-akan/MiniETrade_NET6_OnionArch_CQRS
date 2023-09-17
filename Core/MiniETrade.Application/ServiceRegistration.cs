@@ -23,7 +23,8 @@ namespace MiniETrade.Application
 
             serviceCollection.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-            serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
+            //serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
+            //TODO-HUS bu performans arkadaşı her istekte çalıştığı takdirde sorun oluyor. Bunu her istekte çalıştırcaksak UserId ile beraber çalıştırmamalıyız. Ya da UserId null kontrolü yapılmalı sanırım.
             serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionScopeBehaviour<,>));
             serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

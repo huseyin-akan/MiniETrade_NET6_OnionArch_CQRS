@@ -1,12 +1,18 @@
 ﻿using FluentValidation.AspNetCore;
+using MassTransit.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MiniETrade.API.Middlewares.ExceptionHandling;
+using MiniETrade.API.Middlewares.Localization;
 using MiniETrade.Application;
-using MiniETrade.Application.Validators.Products;
+using MiniETrade.Application.Common.Abstractions.Localization;
+using MiniETrade.Application.Features.Products.Commands.CreateProduct;
 using MiniETrade.Infrastructure;
 using MiniETrade.Infrastructure.Filters;
 using MiniETrade.Persistence;
+using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 
@@ -19,6 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
+builder.Services.AddSingleton<ILanguageService, LanguageService>();
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     //policy => policy.AllowAnyHeader().AllowAnyOrigin()  //her s.a diyen siteye girebilir şeklinde bir ayarlama.
@@ -28,12 +35,16 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>()) //Kendi yazdığımız custom filter'ı devreye sokuyoruz.
     .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>()) //Böylece Application assembly'sindeki tüm Validator
 //sınıflarını otomatik tarar ve bulur. Burda CreateProductValidator demiş olmamızında bir önemi yok. Aslında o assemblideki tüm sınıfları tarıyor.
+//TODO-HUS Burada CreateProductValidator yazması hoşuma gitmedi .bİ bakalım buna.
     .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);    //Bu ayarlama ile default Filter'ın çalışmasını engellemiş oluyoruz
 //Default filter ile validasyon hatası oluştuğunda .Net otomatik kendisi bize sormadan ErrorResponse üretip döndürüyor.
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Localization
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Admin", options =>
@@ -65,6 +76,22 @@ if (app.Environment.IsDevelopment())
  
 if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage(); //TODO-HUS Bunu da bir test edelim bakam
 else app.UseMiddleware<GlobalExceptionHandler>(); //TODO-HUS bakalım çalışıyor mu kardeşimiz.
+
+//Localization
+var supportedCultures = new List<CultureInfo>
+{
+    new CultureInfo("en-US"),   // English (United States)
+    new CultureInfo("es-ES"),   // Spanish (Spain)
+    new CultureInfo("tr-TR"),   // Turkish (Turkey)
+    new CultureInfo("ru-RU")    // Russian (Russia)
+};
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en-US"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures,
+    RequestCultureProviders = new List<IRequestCultureProvider>() { new AcceptLanguageHeaderRequestCultureProvider() }
+});
 
 app.UseStaticFiles();
 app.UseCors();

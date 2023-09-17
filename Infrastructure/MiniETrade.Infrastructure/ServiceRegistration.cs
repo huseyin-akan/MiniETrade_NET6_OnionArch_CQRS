@@ -38,7 +38,7 @@ public static class ServiceRegistration
         serviceCollection.AddScoped<IIdentityService, IdentityService>();
 
         serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
-
+        //serviceCollection.AddSingleton<ILanguageService, LanguageService>();
 
         //Redis Caching
         //serviceCollection.AddStackExchangeRedisCache( options => {

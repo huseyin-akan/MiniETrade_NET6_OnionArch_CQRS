@@ -1,6 +1,6 @@
-﻿using MediatR;
-using MiniETrade.Application.Repositories.Products;
+﻿using MiniETrade.Application.Common.Abstractions.Localization;
 using MiniETrade.Domain.Exceptions;
+using MiniETrade.Domain.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +11,17 @@ namespace MiniETrade.Application.BusinessRules.AppUsers;
 
 public class AppUserBusinessRules : BaseBusinessRules
 {
-    public static bool CheckIfPasswordMatches(string password, string passwordToCheck)
+    private readonly ILanguageService _languageService;
+
+    public AppUserBusinessRules(ILanguageService languageService)
+    {
+        _languageService = languageService;
+    }
+
+    public bool CheckIfPasswordMatches(string password, string passwordToCheck)
     {
         if (password != passwordToCheck) 
-            throw new BusinessException("Şifreler uyuşmuyor."); //TODO-HUS magic string
+            throw new BusinessException(_languageService.GetKey(Messages.PasswordDoesntMatch)); 
         return true; 
     }
 }

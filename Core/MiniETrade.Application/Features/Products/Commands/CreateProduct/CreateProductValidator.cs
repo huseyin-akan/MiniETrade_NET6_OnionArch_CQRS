@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Validators.Products
+namespace MiniETrade.Application.Features.Products.Commands.CreateProduct
 {
     public class CreateProductValidator : AbstractValidator<Product>
     {
