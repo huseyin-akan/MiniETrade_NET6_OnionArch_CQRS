@@ -10,5 +10,8 @@ namespace MiniETrade.Domain.Messages
     public static class Messages
     {
         public static string PasswordDoesntMatch = "PasswordDoesntMatch";
+
+
+        public static string UserNotFound = "UserNotFound";
     }
 }

@@ -11,17 +11,11 @@ namespace MiniETrade.Application.BusinessRules.AppUsers;
 
 public class AppUserBusinessRules : BaseBusinessRules
 {
-    private readonly ILanguageService _languageService;
-
-    public AppUserBusinessRules(ILanguageService languageService)
-    {
-        _languageService = languageService;
-    }
 
     public bool CheckIfPasswordMatches(string password, string passwordToCheck)
     {
         if (password != passwordToCheck) 
-            throw new BusinessException(_languageService.GetKey(Messages.PasswordDoesntMatch)); 
+            throw new BusinessException(Messages.PasswordDoesntMatch); 
         return true; 
     }
 }

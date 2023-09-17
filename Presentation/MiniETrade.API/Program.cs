@@ -1,8 +1,6 @@
 ﻿using FluentValidation.AspNetCore;
-using MassTransit.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MiniETrade.API.Middlewares.ExceptionHandling;
 using MiniETrade.API.Middlewares.Localization;
@@ -25,7 +23,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
-builder.Services.AddSingleton<ILanguageService, LanguageService>();
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     //policy => policy.AllowAnyHeader().AllowAnyOrigin()  //her s.a diyen siteye girebilir şeklinde bir ayarlama.
@@ -45,6 +42,9 @@ builder.Services.AddSwaggerGen();
 
 //Localization
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddSingleton<ILanguageService, LanguageService>();
+
+builder.Services.AddTransient<GlobalExceptionHandler>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Admin", options =>
@@ -64,7 +64,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             NameClaimType = ClaimTypes.Name //JWT üzerinde Name claimne karşılık gelen değeri User.Identity.Name propertysinden elde edebiliriz.
         };
     });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,9 +72,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
- 
-if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage(); //TODO-HUS Bunu da bir test edelim bakam
-else app.UseMiddleware<GlobalExceptionHandler>(); //TODO-HUS bakalım çalışıyor mu kardeşimiz.
 
 //Localization
 var supportedCultures = new List<CultureInfo>
@@ -93,8 +89,12 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     RequestCultureProviders = new List<IRequestCultureProvider>() { new AcceptLanguageHeaderRequestCultureProvider() }
 });
 
+//if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
+app.UseMiddleware<GlobalExceptionHandler>();
+
 app.UseStaticFiles();
 app.UseCors();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

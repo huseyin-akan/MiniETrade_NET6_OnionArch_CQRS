@@ -12,12 +12,10 @@ namespace Application.UnitTests.BusinessRules.AppUsers;
 public class AppUserBusinessRulesTests
 {
     private readonly AppUserBusinessRules _appUserBusinessRules;
-    private readonly Mock<ILanguageService> _languageService;
 
     public AppUserBusinessRulesTests()
     {
-        _languageService = new();
-        _appUserBusinessRules = new(It.IsAny<ILanguageService>() );
+        _appUserBusinessRules = new();
     }
 
     [Theory]

@@ -7,6 +7,7 @@ using MiniETrade.Application.Common.Exceptions;
 using MiniETrade.Application.DTOs;
 using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Domain.Exceptions;
+using MiniETrade.Domain.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,7 +77,7 @@ public class IdentityService : IIdentityService
     public Task<IdentityResult> DeleteUserAsync(Guid userId)
     {
         var user = _userManager.Users.SingleOrDefault(u => u.Id == userId)
-            ?? throw new BusinessException("User Not Found"); //TODO-HUS Messages.UserNotFound
+            ?? throw new BusinessException(Messages.UserNotFound);
 
         return DeleteUserAsync(user);
     }
@@ -123,7 +124,7 @@ public class IdentityService : IIdentityService
 
         if (user is null)
         {
-            throw new BusinessException("Kullanıcı Bulunamadı"); //TODO-HUS magic strings.
+            throw new BusinessException(Messages.UserNotFound);
         }
 
         var result = await _userManager.AddToRoleAsync(user, role);
@@ -152,7 +153,7 @@ public class IdentityService : IIdentityService
     public async Task UpdatePassword(Guid userId, string newPassword)
     {
         var userToUpdate = await GetUserByIdAsync(userId);
-        var token = await _userManager.GeneratePasswordResetTokenAsync(userToUpdate ?? throw new BusinessException("User Not Found")); //TODO-HUS magic strings
+        var token = await _userManager.GeneratePasswordResetTokenAsync(userToUpdate ?? throw new BusinessException(Messages.UserNotFound));
         await _userManager.ResetPasswordAsync(userToUpdate, token, newPassword);
     }
 

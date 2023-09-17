@@ -57,7 +57,6 @@ namespace MiniETrade.API.Controllers
         }
 
         [HttpPost("addproduct")]
-        [AllowAnonymous] //TODO-HUS
         public async Task<IActionResult> AddProduct([FromBody] CreateProductCommand request)
         {
             await _mediator.Send(request);

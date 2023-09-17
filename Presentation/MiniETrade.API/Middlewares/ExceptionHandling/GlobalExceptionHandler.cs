@@ -1,10 +1,7 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
 using MiniETrade.Application.Common.Abstractions.Localization;
 using MiniETrade.Domain.Exceptions;
 using MiniETrade.Domain.Exceptions.ProblemDetail;
-using Newtonsoft.Json;
 using System.Net;
 using ValidationProblemDetails = MiniETrade.Domain.Exceptions.ProblemDetail.ValidationProblemDetails;
 
@@ -12,12 +9,10 @@ namespace MiniETrade.API.Middlewares.ExceptionHandling;
 
 public class GlobalExceptionHandler : IMiddleware 
 {
-    private readonly RequestDelegate _next;
     private readonly ILanguageService _languageService;
 
-    public GlobalExceptionHandler(RequestDelegate next, ILanguageService languageService)
+    public GlobalExceptionHandler(ILanguageService languageService)
     {
-        _next = next;
         _languageService = languageService;
     }
 
@@ -25,7 +20,7 @@ public class GlobalExceptionHandler : IMiddleware
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception exception)
         {
@@ -40,10 +35,11 @@ public class GlobalExceptionHandler : IMiddleware
         }
     }
 
-    private static Task HandleException(HttpContext context, BusinessException exception)
+    private Task HandleException(HttpContext context, BusinessException exception)
     {
         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-        var problemDetail = new BusinessProblemDetails(exception.Message).AsJson();
+        var translatedMessage = HandleMessageLanguages(exception.Message);
+        var problemDetail = new BusinessProblemDetails(translatedMessage).AsJson();
         return context.Response.WriteAsync(problemDetail);
     }
 
@@ -54,7 +50,7 @@ public class GlobalExceptionHandler : IMiddleware
         return context.Response.WriteAsync(problemDetail);
     }
 
-    private static Task HandleException(HttpContext context)
+    private Task HandleException(HttpContext context)
     {
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         var unknownProblemDetail = new InternalServerErrorProblemDetails().AsJson();
@@ -63,8 +59,6 @@ public class GlobalExceptionHandler : IMiddleware
 
     private string HandleMessageLanguages(string key)
     {
-        //TODO-HUS eğer key varsa ilgili dile çevirip hata fırlatıcaz. Eğer key yok ise, gelen stringi fırlatıcaz.
-        //TODO-HUS ama düşünelim hiç key olmayan bir durum olmaması gerek sanki. Belki bunu sağlamak için BusinessException string değil de Messages'ın bir öğresini almak zorunda bırakılabilir.
-        return null;
+       return _languageService.GetKey(key);
     }
 }
