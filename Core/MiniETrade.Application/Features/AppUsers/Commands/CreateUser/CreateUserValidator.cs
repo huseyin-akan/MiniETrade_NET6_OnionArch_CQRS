@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MiniETrade.Domain.Entities.Identity;
+using MiniETrade.Domain.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Features.AppUsers.Commands.CreateUser
 {
-    public class CreateAppUserValidator : AbstractValidator<AppUser>
+    public class CreateAppUserValidator : AbstractValidator<CreateUserCommand>
     {
         public CreateAppUserValidator()
         {
@@ -23,6 +24,10 @@ namespace MiniETrade.Application.Features.AppUsers.Commands.CreateUser
             //RuleFor(p => p.Stock)
             //    .Must(s => s >= 0)
             //    .WithMessage("Stock bilgisi 0'dan küçük olamaz!");
+
+            RuleFor(u => u.Email)
+                .NotEmpty().WithMessage(Messages.InvalidEmailAddress)
+                .EmailAddress().WithMessage(Messages.InvalidEmailAddress);
         }
     }
 }
