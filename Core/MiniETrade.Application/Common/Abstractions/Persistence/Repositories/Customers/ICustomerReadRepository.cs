@@ -5,9 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories.Customers
-{
-    public interface ICustomerReadRepository : IReadRepository<Customer>
-    {
-    }
-}
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Customers;
+
+public interface ICustomerReadRepository : IReadRepository<Customer>
+{}

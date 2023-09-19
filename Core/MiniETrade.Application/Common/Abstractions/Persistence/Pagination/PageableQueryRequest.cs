@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Common.Abstractions
+namespace MiniETrade.Application.Common.Abstractions.Repositories.Pagination;
+
+public abstract class PageableQueryRequest
 {
-    public abstract class PageableQueryRequest
-    {
-        public int Page { get; set; } = 0;
-        public int Size { get; set; } = 5;
-    }
+    public int Page { get; set; } = 0;
+    public int Size { get; set; } = 5;
 }

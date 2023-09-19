@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories
 {
     public interface IRepository<T>  where T: BaseEntity
     {

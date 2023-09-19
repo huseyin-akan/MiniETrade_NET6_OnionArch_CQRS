@@ -5,9 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using File = MiniETrade.Domain.Entities.File;
 
-namespace MiniETrade.Application.Repositories.Files;
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Files;
 
 public interface IFileReadRepository :IReadRepository<File>
-{
-    
-}
+{}

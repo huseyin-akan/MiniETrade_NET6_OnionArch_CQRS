@@ -5,9 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories.Products
-{
-    public interface IProductWriteRepository :IWriteRepository<Product>
-    {
-    }
-}
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Products;
+
+public interface IProductWriteRepository :IWriteRepository<Product>
+{}

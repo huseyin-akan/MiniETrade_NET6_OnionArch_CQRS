@@ -1,5 +1,4 @@
-﻿using MiniETrade.Application.Repositories;
-using MiniETrade.Application.Repositories.Files;
+﻿using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Files;
 using MiniETrade.Persistence.Contexts;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,6 @@ namespace MiniETrade.Persistence.Persistence
     {
         public FileWriteRepository(BaseDbContext context) : base(context)
         {
-
         }
     }
 }

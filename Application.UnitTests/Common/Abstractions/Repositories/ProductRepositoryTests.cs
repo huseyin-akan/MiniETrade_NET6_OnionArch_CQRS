@@ -1,9 +1,6 @@
 ﻿using Application.UnitTests.Fixtures;
-using Microsoft.EntityFrameworkCore;
-using MiniETrade.Application.Repositories;
-using MiniETrade.Application.Repositories.Products;
+using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Products;
 using MiniETrade.Domain.Entities;
-using MiniETrade.Persistence.Contexts;
 using MiniETrade.Persistence.Persistence.Products;
 using System;
 using System.Collections.Generic;

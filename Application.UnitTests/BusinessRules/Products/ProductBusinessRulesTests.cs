@@ -1,5 +1,5 @@
 ﻿using MiniETrade.Application.BusinessRules.Products;
-using MiniETrade.Application.Repositories.Products;
+using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Products;
 using MiniETrade.Domain.Entities;
 using MiniETrade.Domain.Exceptions;
 using System;

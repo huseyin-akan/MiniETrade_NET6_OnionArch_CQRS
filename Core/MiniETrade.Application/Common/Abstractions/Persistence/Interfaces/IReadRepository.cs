@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories
 {
     public interface IReadRepository<T> : IRepository<T> where T : BaseEntity
     {

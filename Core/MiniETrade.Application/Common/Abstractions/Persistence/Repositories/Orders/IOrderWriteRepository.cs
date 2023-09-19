@@ -5,9 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories.Orders
-{
-    public interface IOrderWriteRepository : IWriteRepository<Order>
-    {
-    }
-}
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Orders;
+
+public interface IOrderWriteRepository : IWriteRepository<Order>
+{}

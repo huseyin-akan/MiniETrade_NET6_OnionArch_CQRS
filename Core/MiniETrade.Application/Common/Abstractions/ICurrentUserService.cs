@@ -1,20 +1,16 @@
-﻿using MiniETrade.Application.Features.AppUsers.Commands;
-using MiniETrade.Domain.Entities.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Common.Abstractions
+namespace MiniETrade.Application.Common.Abstractions;
+
+public interface ICurrentUserService
 {
-    public interface ICurrentUserService
-    {
+    Guid UserId { get; }
 
-        Guid UserId { get; }
+    string? UserName { get; }
 
-        string? UserName { get; }
-
-        string? UserMail { get; }
-    }
+    string? UserMail { get; }
 }

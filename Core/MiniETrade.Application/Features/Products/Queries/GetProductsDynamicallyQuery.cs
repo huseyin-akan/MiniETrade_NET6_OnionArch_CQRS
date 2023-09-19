@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using MiniETrade.Application.Common.Abstractions.Persistence.Dynamic;
 using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Products;
-using MiniETrade.Application.Repositories;
-using MiniETrade.Application.Repositories.Products;
+using MiniETrade.Application.Common.Abstractions.Repositories.Pagination;
 using MiniETrade.Domain.Entities;
 using System;
 using System.Collections.Generic;

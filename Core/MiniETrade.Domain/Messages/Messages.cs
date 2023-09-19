@@ -11,12 +11,10 @@ public static class Messages
 {
     public static string PasswordDoesntMatch = "PasswordDoesntMatch";
 
-
-        public static string UserNotFound = "UserNotFound";
-
-        //Validation Messages
-        public static string InvalidEmailAddress = "InvalidEmailAddress";
-    
+    public static string UserNotFound = "UserNotFound";
     public static string UsernameAlreadyRegistered = "UsernameAlreadyRegistered";
     public static string EmailAlreadyRegistered = "EmailAlreadyRegistered";
+
+    //Validation Messages
+    public static string InvalidEmailAddress = "InvalidEmailAddress";
 }

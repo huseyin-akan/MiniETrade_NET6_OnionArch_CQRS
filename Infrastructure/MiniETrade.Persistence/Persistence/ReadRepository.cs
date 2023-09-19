@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using MiniETrade.Application.Repositories;
+using MiniETrade.Application.Common.Abstractions.Persistence.Repositories;
 using MiniETrade.Domain.Entities.Common;
 using MiniETrade.Persistence.Contexts;
 using System;

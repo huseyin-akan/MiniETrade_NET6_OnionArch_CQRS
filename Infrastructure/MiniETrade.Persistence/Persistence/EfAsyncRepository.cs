@@ -2,15 +2,14 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using MiniETrade.Application.Common.Abstractions.Persistence.Dynamic;
-using MiniETrade.Application.Common.Abstractions.Repositories;
-using MiniETrade.Application.Repositories;
+using MiniETrade.Application.Common.Abstractions.Persistence.Repositories;
+using MiniETrade.Application.Common.Abstractions.Repositories.Pagination;
 using MiniETrade.Domain.Entities.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Threading;

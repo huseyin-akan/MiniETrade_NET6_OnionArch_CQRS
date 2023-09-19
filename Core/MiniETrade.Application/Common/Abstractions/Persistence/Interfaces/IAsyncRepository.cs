@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using MiniETrade.Application.Common.Abstractions.Persistence.Dynamic;
+using MiniETrade.Application.Common.Abstractions.Repositories.Pagination;
 using MiniETrade.Domain.Entities.Common;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories
 {
     //Burda yazılanlar IReadRepository ve IWriteRepository'ye dağıtılacak.
     public interface IAsyncRepository<TEntity> where TEntity : BaseEntity

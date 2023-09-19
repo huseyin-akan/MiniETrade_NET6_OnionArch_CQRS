@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories;
+namespace MiniETrade.Application.Common.Abstractions.Repositories.Pagination;
 
 public class Paginate<T> //TODO-HUS yukarıdaki abstract class olan PagebleQueryRequest arkadaşına taşıyalım bunu.
 {

@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Customers;
+using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Files;
+using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Orders;
+using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.ProductImageFiles;
 using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Products;
-using MiniETrade.Application.Repositories.Customers;
-using MiniETrade.Application.Repositories.Files;
-using MiniETrade.Application.Repositories.Orders;
-using MiniETrade.Application.Repositories.ProductImageFiles;
-using MiniETrade.Application.Repositories.Products;
 using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Persistence.Contexts;
 using MiniETrade.Persistence.Persistence;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories.ProductImageFiles
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories.ProductImageFiles
 {
     public interface IProductImageFileWriteRepository : IWriteRepository<ProductImageFile>
     {

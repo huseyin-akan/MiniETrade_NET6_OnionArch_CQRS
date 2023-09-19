@@ -5,8 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Repositories.Customers;
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Customers;
 
 public interface ICustomerWriteRepository : IWriteRepository<Customer>
-{
-}
+{}
