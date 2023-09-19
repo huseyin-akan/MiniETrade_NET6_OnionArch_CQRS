@@ -13,5 +13,8 @@ namespace MiniETrade.Domain.Messages
 
 
         public static string UserNotFound = "UserNotFound";
+
+        //Validation Messages
+        public static string InvalidEmailAddress = "InvalidEmailAddress";
     }
 }
