@@ -27,7 +27,8 @@ public class ProductBusinessRulesTests
         //Arrange
         var productName = "ProductNameToTest";
         Product? productToReturn = new() { Id = Guid.NewGuid() };
-        A.CallTo(() => _productReadRepository.GetAsync(A<Expression<Func<Product, bool>>>._))!.Returns(Task.FromResult(productToReturn));
+        //A.CallTo(() => _productReadRepository.GetAsync(A<Expression<Func<Product, bool>>>._))!.Returns(Task.FromResult(productToReturn));
+        //TODO-HUS yukarıyı Moq kütüphanesine geçirelim.
 
         //Act and Assert
         await Assert.ThrowsAsync<BusinessException>(async () => await _productBusinessRules.CheckIfProductNameIsDuplicate(productName)); 
@@ -39,7 +40,8 @@ public class ProductBusinessRulesTests
         //Arrange
         var productName = "ProductNameToTest";
         Product? product = null;
-        A.CallTo(() => _productReadRepository.GetAsync(A<Expression<Func<Product, bool>>>._)).Returns(Task.FromResult(product));
+        //A.CallTo(() => _productReadRepository.GetAsync(A<Expression<Func<Product, bool>>>._)).Returns(Task.FromResult(product));
+        //TODO-HUS yukarıyı Moq kütüphanesine geçirelim.
 
         //Act and Assert
         await FluentActions.Invoking(async () => await _productBusinessRules.CheckIfProductNameIsDuplicate(productName))

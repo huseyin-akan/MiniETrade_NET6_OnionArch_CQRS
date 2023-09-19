@@ -10,7 +10,7 @@ namespace MiniETrade.Application.Features.Products.Queries;
 
 public class GetProductByIdQueryRequest : IRequest<GetProductByIdQueryResponse>
 {
-    public string Id { get; set; }
+    public Guid Id { get; set; }
 }
 
 public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQueryRequest, GetProductByIdQueryResponse>
@@ -23,7 +23,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQueryReq
     }
     public async Task<GetProductByIdQueryResponse> Handle(GetProductByIdQueryRequest request, CancellationToken cancellationToken)
     {
-        var result = await _productReadRepository.GetByIdAsync(request.Id, false);
+        var result = await _productReadRepository.GetAsync(p => p.Id == request.Id);
         return new() 
         { 
             Id = result.Id,

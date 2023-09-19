@@ -17,4 +17,7 @@ public static class Messages
 
     //Validation Messages
     public static string InvalidEmailAddress = "InvalidEmailAddress";
+
+
+    public static string ProductNotAvailable = "ProductNotAvailable";
 }

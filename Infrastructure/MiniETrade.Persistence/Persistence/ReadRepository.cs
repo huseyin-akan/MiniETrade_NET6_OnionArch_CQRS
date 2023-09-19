@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using MiniETrade.Application.Common.Abstractions.Persistence.Dynamic;
 using MiniETrade.Application.Common.Abstractions.Persistence.Repositories;
+using MiniETrade.Application.Common.Abstractions.Repositories.Pagination;
 using MiniETrade.Domain.Entities.Common;
 using MiniETrade.Persistence.Contexts;
 using System;
@@ -10,66 +12,95 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Persistence.Persistence
+namespace MiniETrade.Persistence.Persistence;
+
+public class ReadRepository<TEntity> : IReadRepository<TEntity> where TEntity : BaseEntity
 {
-    public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
+    private readonly BaseDbContext _context;
+
+    public ReadRepository(BaseDbContext context)
     {
-        private readonly BaseDbContext _context;
+        _context = context;
+    }
 
-        public ReadRepository(BaseDbContext context)
-        {
-            _context = context;
-        }
+    public IQueryable<TEntity> Query() => _context.Set<TEntity>();
 
-        public DbSet<T> Table => _context.Set<T>();
+    public async Task<IEnumerable<TEntity?>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null, Func<IQueryable<TEntity>,
+    IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+    bool withDeleted = false, bool enableTracking = true, CancellationToken cancellation = default)
+    {
+        var queryable = Query();
+        if (!enableTracking)
+            queryable = queryable.AsNoTracking(); //böylece arka planda çalışan tracking sisteminin çalışmamasını sağlamış olduk.
+        if (include != null)
+            queryable = include(queryable);
+        if (withDeleted)
+            queryable = queryable.IgnoreQueryFilters();
+        if (predicate != null)
+            queryable = queryable.Where(predicate);
+        if (orderBy != null)
+            return orderBy(queryable);
+        return queryable;
+    }
 
-        public IQueryable<T> GetAll(bool tracking = true) {
-            var query = Table.AsQueryable();
-            if (!tracking) query = query.AsNoTracking();    //böylece arka planda çalışan tracking sisteminin çalışmamasını sağlamış olduk.
-            return query;
-        } 
+    public async Task<Paginate<TEntity?>> GetListAsync(Expression<Func<TEntity, bool>>? predicate = null, Func<IQueryable<TEntity>,
+    IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+    int index = 0, int size = 100, bool withDeleted = false, bool enableTracking = true, CancellationToken cancellation = default)
+    {
+        var queryable = Query();
+        if (!enableTracking)
+            queryable = queryable.AsNoTracking(); //böylece arka planda çalışan tracking sisteminin çalışmamasını sağlamış olduk.
+        if (include != null)
+            queryable = include(queryable); 
+        if (withDeleted)
+            queryable = queryable.IgnoreQueryFilters();
+        if (predicate != null)
+            queryable = queryable.Where(predicate);
+        if (orderBy != null)
+            return await orderBy(queryable).ToPaginationAsync(index, size, cancellation);
+        return await queryable.ToPaginationAsync(index, size, cancellation);
+    }
 
-        public async Task<T> GetByIdAsync(string Id, bool tracking = true)
-        {
-            //=> await Table.FirstOrDefaultAsync(x => x.Id == Guid.Parse(Id)); 
-            //=> await Table.FindAsync(Guid.Parse(Id));
-            var query  = Table.AsQueryable();
-            if (!tracking) query = query.AsNoTracking();
-            return await query.FirstOrDefaultAsync(data => data.Id == Guid.Parse(Id));
-        }            
+    public async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+    bool withDeleted = false, bool enableTracking = true, CancellationToken cancellation = default)
+    {
+        IQueryable<TEntity> queryable = Query();
+        if (!enableTracking)
+            queryable = queryable.AsNoTracking();
+        if (include != null)
+            queryable = include(queryable);
+        if (withDeleted)
+            queryable = queryable.IgnoreQueryFilters(); //Eğer uygulanan bir QueryFilter var ise, ki biz mesela Product için DeletedDate üzerinden bir filter uyguladık onu ihmal eder.
+        return await queryable.FirstOrDefaultAsync(predicate, cancellation);
+    }
 
-        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> method, bool tracking = true)
-        {
-            var query = Table.AsQueryable();
-            if (!tracking) query = Table.AsNoTracking();
-            return await query.FirstOrDefaultAsync(method);
-        } 
-            
-        public IQueryable<T> GetWhere(Expression<Func<T, bool>> method, bool tracking = true)
-        {
-            var query = Table.Where(method);
-            if (!tracking) query = query.AsNoTracking();
-            return query;
-        }
+    public Task<bool> AnyAsync(Expression<Func<TEntity, bool>>? predicate = null, bool withDeleted = false, bool enableTracking = true, CancellationToken cancellation = default)
+    {
+        IQueryable<TEntity> query = Query();
+        if (!enableTracking) query = query.AsNoTracking();
+        if (withDeleted) query = query.IgnoreQueryFilters();
+        if (predicate is not null) query = query.Where(predicate);
 
-        public async Task<T> GetAsync()
-        {
-            throw new NotImplementedException();
-        }
+        return query.AnyAsync(cancellation);
+    }
 
-        public Task<T?> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null, bool withDeleted = false, bool enableTracking = true, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<Paginate<TEntity?>> GetListByDynamicAsync(DynamicQuery dynamic, Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        int index = 0, int size = 100, bool withDeleted = false, bool enableTracking = true, CancellationToken cancellation = default)
+    {
+        IQueryable<TEntity> queryable = Query().ToDynamic(dynamic);
+        if (!enableTracking)
+            queryable = queryable.AsNoTracking();
+        if (include != null)
+            queryable = include(queryable);
+        if (withDeleted)
+            queryable = queryable.IgnoreQueryFilters();
+        if (predicate != null)
+            queryable = queryable.Where(predicate);
+        return await queryable.ToPaginationAsync(index, size, cancellation);
     }
 }
 
 /* 
- EF arka planda tracking yaparak dataların nasıl değiştiğini takip eder ve biz SaveChanges() dediğimizde bu takibe göre SQL oluşturur. Fakat read repository'de herhangi bir
-manipülasyon işlemi olmadığı için tracking'e gerek yoktur ve biz de onu kapattık.
- */
+EF arka planda tracking yaparak dataların nasıl değiştiğini takip eder ve biz SaveChanges() dediğimizde bu takibe göre SQL oluşturur. Fakat read repository'de herhangi bir manipülasyon işlemi olmadığı için tracking'e gerek yoktur ve biz de onu kapattık.
+*/

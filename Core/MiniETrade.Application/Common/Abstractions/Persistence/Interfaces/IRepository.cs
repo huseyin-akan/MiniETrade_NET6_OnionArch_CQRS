@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories
+namespace MiniETrade.Application.Common.Abstractions.Persistence.Repositories;
+
+public interface IRepository<TEntity>  where TEntity: BaseEntity
 {
-    public interface IRepository<T>  where T: BaseEntity
-    {
-        DbSet<T> Table { get; }
-    }
+    IQueryable<TEntity> Query();
 }

@@ -46,7 +46,7 @@ public class ProductRepositoryTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task GetProductById()
     {
-        var result = await _productReadRepository.GetByIdAsync(_testProductId.ToString() );
+        var result = await _productReadRepository.GetAsync(p => p.Id == _testProductId);
         result.Should().NotBeNull();
         result.Should().BeOfType<Product>();
         result.Name.Should().Be("Mouse");

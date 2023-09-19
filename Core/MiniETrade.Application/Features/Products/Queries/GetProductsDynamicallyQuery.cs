@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Features.Products.Queries
 {
-    public record GetProductsDynamicallyQuery : PageableQueryRequestRec, IRequest<GetProductsDynamicallyQueryResponse>
+    public record GetProductsDynamicallyQuery : PageableQuery, IRequest<GetProductsDynamicallyQueryResponse>
     {
         public DynamicQuery? DynamicQuery { get; set; }
     }
@@ -19,37 +19,23 @@ namespace MiniETrade.Application.Features.Products.Queries
     public class GetProductsDynamicallyQueryHandler : IRequestHandler<GetProductsDynamicallyQuery, GetProductsDynamicallyQueryResponse>
     {
         private readonly IProductReadRepository _productReadRepository;
-        private readonly IProductAsyncRepository _productAsyncRepository;
-        public GetProductsDynamicallyQueryHandler(IProductReadRepository productReadRepository, IProductAsyncRepository productAsyncRepository)
+        public GetProductsDynamicallyQueryHandler(IProductReadRepository productReadRepository)
         {
             _productReadRepository = productReadRepository;
-            _productAsyncRepository = productAsyncRepository;
         }
         public async Task<GetProductsDynamicallyQueryResponse> Handle(GetProductsDynamicallyQuery request, CancellationToken cancellationToken)
         {
-            Paginate<Product?> products = await _productAsyncRepository.GetListByDynamicAsync(
+            Paginate<Product?> products = await _productReadRepository.GetListByDynamicAsync(
                 dynamic: request.DynamicQuery,
                 //include: p => p.Include(m => m.) //TODO-HUS EF eklemek gerek sanırım
                 index : request.Page,
                 size : request.Size
                 );
 
-            var totalCount = _productReadRepository.GetAll(false).Count();
-            var result = _productReadRepository.GetAll(false).Select(p => new
-            {
-                p.Id,
-                p.Name,
-                p.Stock,
-                p.Price,
-                p.Created,
-                p.LastModified
-            }).Skip(request.Page * request.Size).Take(request.Size);
-
-            //TODO-HUS yukarıya Skip ve Take yazılmış ama bunlara gerek yok. Pageable yapısına geçelim.
+            var result = _productReadRepository.GetAllAsync();
 
             return new GetProductsDynamicallyQueryResponse
             {
-                TotalCount = totalCount,
                 Products = result
             };
         }
@@ -58,6 +44,5 @@ namespace MiniETrade.Application.Features.Products.Queries
     public class GetProductsDynamicallyQueryResponse
     {
         public object Products { get; set; }
-        public int TotalCount { get; set; }
     }
 }

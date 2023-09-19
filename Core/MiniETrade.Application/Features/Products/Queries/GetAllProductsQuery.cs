@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Products;
 using MiniETrade.Application.Common.Abstractions.Repositories.Pagination;
+using MiniETrade.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,40 +10,43 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Features.Products.Queries;
 
-public class GetAllProductsQueryRequest : PageableQueryRequest, IRequest<GetAllProductsQueryResponse>
-{       
-}
+public record GetAllProductsQuery : PageableQuery, IRequest<GetAllProductsResponse>
+{}
 
-public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQueryRequest, GetAllProductsQueryResponse>
+public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, GetAllProductsResponse>
 {
     private readonly IProductReadRepository _productReadRepository;
     public GetAllProductsQueryHandler(IProductReadRepository productReadRepository)
     {
         _productReadRepository = productReadRepository;
     }
-    public async Task<GetAllProductsQueryResponse> Handle(GetAllProductsQueryRequest request, CancellationToken cancellationToken)
+    public async Task<GetAllProductsResponse> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
-        var totalCount = _productReadRepository.GetAll(false).Count();
-        var result = _productReadRepository.GetAll(false).Select(p => new
-        {
-            p.Id,
-            p.Name,
-            p.Stock,
-            p.Price,
-            p.Created,
-            p.LastModified
-        }).Skip(request.Page * request.Size).Take(request.Size);
+        var result = await _productReadRepository.GetAllAsync(cancellation: cancellationToken);
         
-        return new GetAllProductsQueryResponse
+        //TODO-HUS maple.
+        return new GetAllProductsResponse
         {
-            TotalCount = totalCount,
-            Products = result
+            
         };
     }
 }
 
-public class GetAllProductsQueryResponse
+public record GetAllProductsResponse
 {
-    public object Products { get; set; }
-    public int TotalCount { get; set; }
+    IEnumerable<GetAllProductsDto> Products { get; set; }
+
+    public GetAllProductsResponse()
+    {
+        Products = new List<GetAllProductsDto>();
+    }
+}
+
+public record GetAllProductsDto
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public int Stock { get; set; }
+    public float Price { get; set; }
+    public DateTime Created { get; set; }
 }

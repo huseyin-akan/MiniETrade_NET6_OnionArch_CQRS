@@ -35,22 +35,23 @@ public class ProductsController : ControllerBase
     [HttpGet("addsome")]
     public async Task<IActionResult> AddProducts()
     {
-        await _productWriteRepository.AddRangeAsync(
-            new()
-            {
-                new() { Id = Guid.NewGuid(), Name = "Product1", Price = 100, Created = DateTime.UtcNow, Stock = 10 },
-                new() { Id = Guid.NewGuid(), Name = "Product2", Price = 200, Created = DateTime.UtcNow, Stock = 20 },
-                new() { Id = Guid.NewGuid(), Name = "Product3", Price = 300, Created = DateTime.UtcNow, Stock = 30 },
-                new() { Id = Guid.NewGuid(), Name = "Product4", Price = 400, Created = DateTime.UtcNow, Stock = 40 },
-                new() { Id = Guid.NewGuid(), Name = "Product5", Price = 500, Created = DateTime.UtcNow, Stock = 50 }
-            }
-            );
-        await _productWriteRepository.SaveAsync();
+        //TODO-HUS
+        //await _productWriteRepository.AddRangeAsync(
+        //    new()
+        //    {
+        //        new() { Id = Guid.NewGuid(), Name = "Product1", Price = 100, Created = DateTime.UtcNow, Stock = 10 },
+        //        new() { Id = Guid.NewGuid(), Name = "Product2", Price = 200, Created = DateTime.UtcNow, Stock = 20 },
+        //        new() { Id = Guid.NewGuid(), Name = "Product3", Price = 300, Created = DateTime.UtcNow, Stock = 30 },
+        //        new() { Id = Guid.NewGuid(), Name = "Product4", Price = 400, Created = DateTime.UtcNow, Stock = 40 },
+        //        new() { Id = Guid.NewGuid(), Name = "Product5", Price = 500, Created = DateTime.UtcNow, Stock = 50 }
+        //    }
+        //    );
+        //await _productWriteRepository.SaveAsync(); //TODO-HUS
         return Ok("Ekleme işlemi başarılı oldu");
     }
 
     [HttpGet("getall")]
-    public async Task<IActionResult> GetAllProducts([FromQuery] GetAllProductsQueryRequest request)
+    public async Task<IActionResult> GetAllProducts([FromQuery] GetAllProductsQuery request)
     {
         var result = await _mediator.Send(request);
         return Ok(result);
@@ -94,7 +95,7 @@ public class ProductsController : ControllerBase
     [HttpGet("[action]/{id}")]
     public async Task<IActionResult> GetProductImages(string id)
     {
-        var product = await _productReadRepository.Table.Include(p => p.ProductImages)
+        var product = await _productReadRepository.Query().Include(p => p.ProductImages)
             .FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
        
         return Ok(product?.ProductImages.Select(p => new
@@ -108,13 +109,13 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> DeleteProductImage(string productId, string imageId)
     {
-        var product = await _productReadRepository.Table.Include(p => p.ProductImages)
+        var product = await _productReadRepository.Query().Include(p => p.ProductImages)
             .FirstOrDefaultAsync(p => p.Id == Guid.Parse(productId)) ?? throw new DataNotFoundException();
         
         
         var productImageFile = product.ProductImages.FirstOrDefault(p => p.Id == Guid.Parse(imageId)) ?? throw new DataNotFoundException();
         product.ProductImages.Remove(productImageFile);
-        await _productWriteRepository.SaveAsync();
+        //await _productWriteRepository.SaveAsync(); TODO-HUS
         return Ok();
     }
 }

@@ -27,7 +27,7 @@ public static class IQueryablePaginationExtensions
             Count = count,
             Items = items,
             Size = size,
-            Pages = (int) Math.Ceiling(count/ (double) size)
+            Page = (int) Math.Ceiling(count/ (double) size)
         };
         return pagination;
     }

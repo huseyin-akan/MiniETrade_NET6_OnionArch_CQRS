@@ -14,7 +14,7 @@ namespace MiniETrade.Application.Features.ProductImageFiles.Commands;
 
 public class UploadProductImageCommandRequest : IRequest<UploadProductImageCommandResponse>
 {
-    public string Id { get; set; }
+    public Guid Id { get; set; }
 }
 
 public class UploadProductImageCommandRequestHandler : IRequestHandler<UploadProductImageCommandRequest, UploadProductImageCommandResponse>
@@ -42,7 +42,7 @@ public class UploadProductImageCommandRequestHandler : IRequestHandler<UploadPro
 
         var result = await _storageService.UploadAsync("product-images", imagesToUpload);
 
-        var product = await _productReadRepository.GetByIdAsync(request.Id);
+        var product = await _productReadRepository.GetAsync(p => p.Id == request.Id);
 
         await _productImageFileWriteRepository.AddRangeAsync(result.Select(r => new ProductImageFile
         {
@@ -51,7 +51,6 @@ public class UploadProductImageCommandRequestHandler : IRequestHandler<UploadPro
             Products = new List<Product>() { product }
         }).ToList());
 
-        await _productImageFileWriteRepository.SaveAsync();
 
         return new();
     }
