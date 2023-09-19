@@ -22,16 +22,10 @@ namespace MiniETrade.Application.Features.AppUsers.Commands.CreateUser
 
         public async Task<CreateUserResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-
-            _appUserBusinessRules.CheckIfPasswordMatches(request.Password, request.PasswordConfirm);
-
-            //check if username was taken
-            //var userByUserName = await _identityService.FindByNameAsync(registerUserDto.Username);
-            //if (userByUserName != null) throw new BusinessException(Messages.UsernameAlreadyRegistered);
-
-            //check if email was taken
-            //var userByEmail = await _identityService.FindByEmailAsync(registerUserDto.Email);
-            //if (userByEmail != null) throw new BusinessException(Messages.EmailAlreadyRegistered);
+            //BusinessRules
+            AppUserBusinessRules.CheckIfPasswordMatches(request.Password, request.PasswordConfirm);
+            await _appUserBusinessRules.CheckIfUsernameIsAvailable(request.Username);
+            await _appUserBusinessRules.CheckIfEmailIsAvailable(request.Email);
 
             var response = await _identityService.CreateUserAsync(new()
             {

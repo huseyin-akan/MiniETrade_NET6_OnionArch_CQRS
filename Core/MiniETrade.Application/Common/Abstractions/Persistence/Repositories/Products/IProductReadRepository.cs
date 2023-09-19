@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Repositories.Products
 {
-    //TODO-HUS Repositories altındaki klasör isimlendirmelerini çoğul yapalım. Domain class nesneleriyle karışmasın.
+    //TODO-HUS Abstractions --> Persistence --> Repositories kısmındaki repolarım namespacelerini güncellemek gerek.
     public interface IProductReadRepository :IReadRepository<Product>
     {
     }

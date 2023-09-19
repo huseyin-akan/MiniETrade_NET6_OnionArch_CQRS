@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EmailAlreadyRegistered" xml:space="preserve">
+    <value>The email was already registered by another user. Please try another mail</value>
+  </data>
   <data name="PasswordDoesntMatch" xml:space="preserve">
     <value>Your password doesnt match with your password repeat. Please try again later</value>
+  </data>
+  <data name="UsernameAlreadyRegistered" xml:space="preserve">
+    <value>User name was taken by another user. Please try another username</value>
   </data>
   <data name="UserNotFound" xml:space="preserve">
     <value>The user was not found</value>

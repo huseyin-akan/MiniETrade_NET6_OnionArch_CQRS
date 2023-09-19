@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using MiniETrade.Application.Common.Models;
 using MiniETrade.Application.DTOs;
 using MiniETrade.Domain.Entities.Identity;
 using System;
@@ -22,7 +21,7 @@ namespace MiniETrade.Application.Common.Abstractions.Identity
         Task<IdentityResult> DeleteUserAsync(Guid userId);
         Task<IdentityResult> DeleteUserAsync(AppUser user);
         Task<AppUser> FindByEmailAsync(string email);
-        Task<AppUser> FindByNameAsync(string userName);
+        Task<AppUser> FindByUserNameAsync(string userName);
         List<AppUser> GetAllUsers();
         Task<IList<string>> GetRolesAsync(AppUser user);
         Task<string> GetUserNameAsync(Guid userId);

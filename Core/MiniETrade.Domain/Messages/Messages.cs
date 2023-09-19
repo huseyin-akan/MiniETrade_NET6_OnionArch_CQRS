@@ -5,13 +5,13 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniETrade.Domain.Messages
+namespace MiniETrade.Domain.Messages;
+
+public static class Messages
 {
-    public static class Messages
-    {
-        public static string PasswordDoesntMatch = "PasswordDoesntMatch";
+    public static string PasswordDoesntMatch = "PasswordDoesntMatch";
 
-
-        public static string UserNotFound = "UserNotFound";
-    }
+    public static string UserNotFound = "UserNotFound";
+    public static string UsernameAlreadyRegistered = "UsernameAlreadyRegistered";
+    public static string EmailAlreadyRegistered = "EmailAlreadyRegistered";
 }

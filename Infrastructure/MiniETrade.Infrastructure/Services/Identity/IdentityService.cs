@@ -88,7 +88,7 @@ public class IdentityService : IIdentityService
         return _userManager.UpdateAsync(user);
     }
 
-    public async Task<AppUser> FindByNameAsync(string userName)
+    public async Task<AppUser> FindByUserNameAsync(string userName)
     {
         var result = await _userManager.FindByNameAsync(userName);
         return result;
