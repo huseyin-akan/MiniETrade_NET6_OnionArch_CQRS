@@ -29,7 +29,7 @@ public class DeleteProductCommandRequestHandler : IRequestHandler<DeleteProductC
     public async Task<DeleteProductCommandResponse> Handle(DeleteProductCommandRequest request, CancellationToken cancellationToken)
     {
         var productToDelete = await _productReadRepository.GetAsync(p => p.Id == request.ProductId)
-            ?? throw new BusinessException(Messages.ProductNotAvailable);
+            ?? throw new BusinessException(AppMessages.ProductNotAvailable);
         var result = await _productWriteRepository.DeleteAsync(productToDelete);
         return new();
     }

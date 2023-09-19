@@ -29,7 +29,7 @@ public class AppUserBusinessRulesTests
     public void WhenPasswordsDontMatchShouldThrowError(string password, string passwordRepeat)
     {
         Action action = () => AppUserBusinessRules.CheckIfPasswordMatches(password, passwordRepeat);
-        action.Should().Throw<BusinessException>().WithMessage(Messages.PasswordDoesntMatch);
+        action.Should().Throw<BusinessException>().WithMessage(AppMessages.PasswordDoesntMatch);
     }
 
     [Theory]
@@ -45,7 +45,7 @@ public class AppUserBusinessRulesTests
     {
         _identityService.Setup(x => x.FindByUserNameAsync(It.IsAny<string>())).ReturnsAsync(It.IsAny<AppUser>());
         Func<Task> action = async () => await _appUserBusinessRules.CheckIfUsernameIsAvailable("somenewusername");
-        action.Should().ThrowAsync<BusinessException>().WithMessage(Messages.UsernameAlreadyRegistered);
+        action.Should().ThrowAsync<BusinessException>().WithMessage(AppMessages.UsernameAlreadyRegistered);
     }
 
     [Fact]
@@ -53,6 +53,6 @@ public class AppUserBusinessRulesTests
     {
         _identityService.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(It.IsAny<AppUser>());
         Func<Task> action = async () => await _appUserBusinessRules.CheckIfEmailIsAvailable("somerandomemail@gmail.com");
-        action.Should().ThrowAsync<BusinessException>().WithMessage(Messages.EmailAlreadyRegistered);
+        action.Should().ThrowAsync<BusinessException>().WithMessage(AppMessages.EmailAlreadyRegistered);
     }
 }

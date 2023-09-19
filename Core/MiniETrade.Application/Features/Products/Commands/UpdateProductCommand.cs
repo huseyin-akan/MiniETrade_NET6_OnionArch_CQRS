@@ -35,7 +35,7 @@ public class UpdateProductCommandRequestHandler : IRequestHandler<UpdateProductC
     public async Task<UpdateProductCommandResponse> Handle(UpdateProductCommandRequest request, CancellationToken cancellationToken)
     {
         var productToUpdate = await _productReadRepository.GetAsync(p => p.Id == request.Id)
-            ?? throw new BusinessException(Messages.ProductNotAvailable);
+            ?? throw new BusinessException(AppMessages.ProductNotAvailable);
 
         var mappedProduct = new Product(); //TODO-HUS burada mapleme yapmalıyız.
         var result = _productWriteRepository.UpdateAsync(mappedProduct);  

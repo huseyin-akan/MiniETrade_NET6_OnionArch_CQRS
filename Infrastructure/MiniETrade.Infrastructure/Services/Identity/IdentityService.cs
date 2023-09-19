@@ -77,7 +77,7 @@ public class IdentityService : IIdentityService
     public Task<IdentityResult> DeleteUserAsync(Guid userId)
     {
         var user = _userManager.Users.SingleOrDefault(u => u.Id == userId)
-            ?? throw new BusinessException(Messages.UserNotFound);
+            ?? throw new BusinessException(AppMessages.UserNotFound);
 
         return DeleteUserAsync(user);
     }
@@ -124,7 +124,7 @@ public class IdentityService : IIdentityService
 
         if (user is null)
         {
-            throw new BusinessException(Messages.UserNotFound);
+            throw new BusinessException(AppMessages.UserNotFound);
         }
 
         var result = await _userManager.AddToRoleAsync(user, role);
@@ -153,7 +153,7 @@ public class IdentityService : IIdentityService
     public async Task UpdatePassword(Guid userId, string newPassword)
     {
         var userToUpdate = await GetUserByIdAsync(userId);
-        var token = await _userManager.GeneratePasswordResetTokenAsync(userToUpdate ?? throw new BusinessException(Messages.UserNotFound));
+        var token = await _userManager.GeneratePasswordResetTokenAsync(userToUpdate ?? throw new BusinessException(AppMessages.UserNotFound));
         await _userManager.ResetPasswordAsync(userToUpdate, token, newPassword);
     }
 

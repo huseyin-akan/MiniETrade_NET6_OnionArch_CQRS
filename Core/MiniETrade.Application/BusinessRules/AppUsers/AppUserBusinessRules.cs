@@ -21,18 +21,18 @@ public class AppUserBusinessRules : BaseBusinessRules
 
     public static void CheckIfPasswordMatches(string password, string passwordToCheck)
     {
-        if (password != passwordToCheck) throw new BusinessException(Messages.PasswordDoesntMatch); 
+        if (password != passwordToCheck) throw new BusinessException(AppMessages.PasswordDoesntMatch); 
     }
 
     public async Task CheckIfUsernameIsAvailable(string userName)
     {
         var userByUserName = await _identityService.FindByUserNameAsync(userName);
-        if (userByUserName != null) throw new BusinessException(Messages.UsernameAlreadyRegistered);
+        if (userByUserName != null) throw new BusinessException(AppMessages.UsernameAlreadyRegistered);
     }
 
     public async Task CheckIfEmailIsAvailable(string email)
     {
         var userByEmail = await _identityService.FindByEmailAsync(email);
-        if (userByEmail != null) throw new BusinessException(Messages.EmailAlreadyRegistered);
+        if (userByEmail != null) throw new BusinessException(AppMessages.EmailAlreadyRegistered);
     }
 }

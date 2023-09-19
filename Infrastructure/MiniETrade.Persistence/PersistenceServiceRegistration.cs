@@ -30,7 +30,7 @@ public static class PersistenceServiceRegistration
         
         services.AddIdentity<AppUser, AppRole>(options =>
         {
-            options.Password.RequiredLength = 3;
+            options.Password.RequiredLength = 6;
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequireDigit = false;
             options.Password.RequireLowercase = false;
