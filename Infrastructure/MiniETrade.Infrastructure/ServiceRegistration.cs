@@ -18,6 +18,7 @@ using MiniETrade.Infrastructure.Services.Storage;
 using MiniETrade.Infrastructure.Services.Storage.Local;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ public static class ServiceRegistration
     {
         serviceCollection.AddScoped<IStorageService, StorageService>();
         serviceCollection.AddScoped<ITokenHelper, TokenHelper>();
+        serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
         //serviceCollection.AddScoped<IMQPublisherService, RabbitMQService>(); TODO-HUS bu servisler şimdilik kapatıldı. Şirket networkünden clouda bağlanamıyorum.
         //serviceCollection.AddScoped<IMQConsumerService, RabbitMQService>();
         //serviceCollection.AddScoped<IMassTransitService, MassTransitService>(); 

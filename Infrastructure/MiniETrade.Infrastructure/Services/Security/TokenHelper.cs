@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using MiniETrade.Application.Common.Abstractions.Identity;
 using MiniETrade.Application.Common.Abstractions.Security;
 using MiniETrade.Application.DTOs;
 using MiniETrade.Domain.Entities.Identity;
+using MiniETrade.Domain.Exceptions;
+using MiniETrade.Domain.Messages;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,76 +14,125 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace MiniETrade.Infrastructure.Services.Security
+namespace MiniETrade.Infrastructure.Services.Security;
+
+public class TokenHelper : ITokenHelper
 {
-    public class TokenHelper : ITokenHelper
+    private readonly IConfiguration Configuration;
+    private readonly TokenOptions _tokenOptions;
+    private readonly IIdentityService _identityService;
+    private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler;
+
+    public TokenHelper(IConfiguration configuration, IIdentityService identityService, JwtSecurityTokenHandler jwtSecurityTokenHandler)
     {
-        private DateTime _accessTokenExpiration;
-        private readonly IConfiguration Configuration;
-        private readonly TokenOptions _tokenOptions;
+        Configuration = configuration;
+        _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+        _identityService = identityService;
+        _jwtSecurityTokenHandler = jwtSecurityTokenHandler;
+    }
 
-        public TokenHelper(IConfiguration configuration)
+    public async Task<AppToken> CreateAppToken(AppUser user, IList<string> userRoles)
+    {
+        var jwtToken = CreateJwtSecurityToken(user, userRoles);
+        var refreshToken = CreateRefreshToken();
+
+        await UpdateUserRefreshToken(user, refreshToken);
+
+        return new AppToken
         {
-            Configuration = configuration;
-            _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
-        }
+            JwtToken = _jwtSecurityTokenHandler.WriteToken(jwtToken),
+            JwtTokenExpiration = jwtToken.ValidTo,
+            RefreshToken = refreshToken
+        };
+    }
 
-        public Task<Token> CreateAccessToken(AppUser user, IList<string> operationClaims)
+    public async Task<AppToken> RefreshAppToken(AppUser user, IList<string> userRoles)
+    {
+        var jwtToken = CreateJwtSecurityToken(user, userRoles);
+        var refreshToken = CreateRefreshToken();
+
+        user.RefreshToken = refreshToken;
+        await _identityService.UpdateUser(user);
+
+        return new AppToken
         {
-            var result = Task.Run(() =>
-            {
-                _accessTokenExpiration = DateTime.Now.AddDays(_tokenOptions.AccessTokenExpiration);
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecurityKey));
-                var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);  
-                var jwt = CreateJwtSecurityToken(_tokenOptions, user, signingCredentials, operationClaims);
-                var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-                var token = jwtSecurityTokenHandler.WriteToken(jwt);
+            JwtToken = _jwtSecurityTokenHandler.WriteToken(jwtToken),
+            JwtTokenExpiration = jwtToken.ValidTo,
+            RefreshToken = refreshToken
+        };
+    }
 
-                return new Token
-                {
-                    AccessToken = token,
-                    Expiration = _accessTokenExpiration,
-                    RefreshToken = CreateRefreshToken()
-                };
-            });
-            return result;
-        }
+    public string CreateRefreshToken()
+    {
+        byte[] randomNumber = new byte[64];
+        using var random = RandomNumberGenerator.Create();
+        random.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
 
-        public string CreateRefreshToken()
+    public JwtSecurityToken CreateJwtSecurityToken(AppUser user, IList<string> userRoles)
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecurityKey));
+        var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+
+        var jwt = new JwtSecurityToken(
+            issuer: _tokenOptions.Issuer,
+            audience: _tokenOptions.Audience,
+            expires: DateTime.Now.AddDays(_tokenOptions.JwtTokenExpiration),
+            notBefore: DateTime.Now,
+            claims: SetClaims(user, userRoles.ToList()),
+            signingCredentials: signingCredentials
+        );
+        return jwt;
+    }
+
+    public async Task UpdateUserRefreshToken(AppUser user, string refreshToken)
+    {
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(_tokenOptions.RefreshTokenExpiration);
+
+        await _identityService.UpdateUser(user);
+    }
+
+    private static IEnumerable<Claim> SetClaims(AppUser user, List<string> userRoles)
+    {
+        var claims = new List<Claim>
         {
-            byte[] number = new byte[32];
-            using RandomNumberGenerator random = RandomNumberGenerator.Create();
-            random.GetBytes(number);
-            return Convert.ToBase64String(number);
-        }
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim("username", user.UserName),
+            new Claim(ClaimTypes.Email, user.UserName)
+        };
+        userRoles.ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
 
-        private JwtSecurityToken CreateJwtSecurityToken(TokenOptions tokenOptions, AppUser user,
-            SigningCredentials signingCredentials, IList<string> operationClaims)
+        return claims;
+    }
+
+    public JwtSecurityToken GetTokenInfoFromExpiredToken(string jwtToken)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
         {
-            var jwt = new JwtSecurityToken(
-                issuer: tokenOptions.Issuer,
-                audience: tokenOptions.Audience,
-                expires: _accessTokenExpiration,
-                notBefore: DateTime.Now,
-                claims: SetClaims(user, operationClaims.ToList()),
-                signingCredentials: signingCredentials
-            );
-            return jwt;
-        }
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecurityKey)),
+            ValidateLifetime = false
+        };
 
-        private static IEnumerable<Claim> SetClaims(AppUser user, List<string> operationClaims)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim("username", user.UserName),
-                new Claim(ClaimTypes.Email, user.UserName)
-            };
-            operationClaims.ToArray().ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
+        _jwtSecurityTokenHandler.ValidateToken(jwtToken, tokenValidationParameters, out SecurityToken securityToken);
+        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature, StringComparison.InvariantCultureIgnoreCase)) throw new BusinessException(AppMessages.UnauthorizedAttempt);
+        return jwtSecurityToken; 
+    }
+    public string GetUsernameFromJwtToken(JwtSecurityToken jwtToken)
+    {
+        var userNameClaim = jwtToken.Claims.Where(c => c.Type == "username").FirstOrDefault()
+            ?? throw new BusinessException(AppMessages.UnauthorizedAttempt);
+        return userNameClaim.Value;
+    }
 
-            return claims;
-        }
+    public IList<string> GetRolesFromJwtToken(JwtSecurityToken jwtToken)
+    {
+        var roles = jwtToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+        return roles;
     }
 }

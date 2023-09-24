@@ -14,9 +14,8 @@ public interface IIdentityService
     Task<bool> AuthorizeAsync(Guid userId, string policyName);
     Task<bool> AddUserToRole(Guid userId, string role);
     Task<bool> CheckPasswordAsync(AppUser user, string password);
-    Task<Token> CreateAccessToken(AppUser user);
     Task<bool> CreateRole(string roleName);
-    Task<Guid> CreateUserAsync(AppUser user, string password);
+    Task<AppUser> CreateUserAsync(AppUser user, string password);
     Task<IdentityResult> DeleteUserAsync(Guid userId);
     Task<IdentityResult> DeleteUserAsync(AppUser user);
     Task<AppUser> FindByEmailAsync(string email);

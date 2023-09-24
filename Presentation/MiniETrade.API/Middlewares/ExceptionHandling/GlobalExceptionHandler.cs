@@ -2,6 +2,7 @@
 using MiniETrade.Application.Common.Abstractions.Localization;
 using MiniETrade.Domain.Exceptions;
 using MiniETrade.Domain.Exceptions.ProblemDetail;
+using MiniETrade.Domain.Messages;
 using System.Net;
 using ValidationProblemDetails = MiniETrade.Domain.Exceptions.ProblemDetail.ValidationProblemDetails;
 
@@ -30,8 +31,12 @@ public class GlobalExceptionHandler : IMiddleware
             {
                 BusinessException businessException => HandleException(context, businessException),
                 ValidationException validationException => HandleException(context, validationException),
+                UnAuthorizedException unauthorizedException => HandleException(context, unauthorizedException),
+                UserCreateFailedException userCreateFailedException => HandleException(context, userCreateFailedException),
                 _ => HandleException(context)
             };
+
+            //TODO-HUS log the exception.
         }
     }
 
@@ -47,6 +52,22 @@ public class GlobalExceptionHandler : IMiddleware
     {
         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
         var problemDetail = new ValidationProblemDetails(exception.Errors).AsJson();
+        return context.Response.WriteAsync(problemDetail);
+    }
+
+    private Task HandleException(HttpContext context, UnAuthorizedException exception)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        var translatedMessage = HandleMessageLanguages(exception.Message);
+        var problemDetail = new BusinessProblemDetails(translatedMessage).AsJson();
+        return context.Response.WriteAsync(problemDetail);
+    }
+
+    private Task HandleException(HttpContext context, UserCreateFailedException exception)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest ;
+        var translatedMessage = HandleMessageLanguages(AppMessages.UserCreateFailed);
+        var problemDetail = new BusinessProblemDetails(translatedMessage).AsJson();
         return context.Response.WriteAsync(problemDetail);
     }
 

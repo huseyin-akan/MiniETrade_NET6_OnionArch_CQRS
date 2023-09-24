@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MiniETrade.Application.Common.Abstractions.Identity;
-using MiniETrade.Application.Common.Abstractions.Security;
-using MiniETrade.Application.Common.Exceptions;
-using MiniETrade.Application.DTOs;
 using MiniETrade.Domain.Entities.Identity;
 using MiniETrade.Domain.Exceptions;
 using MiniETrade.Domain.Messages;
@@ -22,20 +19,17 @@ public class IdentityService : IIdentityService
     private readonly IUserClaimsPrincipalFactory<AppUser> _userClaimsPrincipalFactory;
     private readonly IAuthorizationService _authorizationService;
     private readonly RoleManager<AppRole> _roleManager;
-    private readonly ITokenHelper _tokenHelper;
 
     public IdentityService(
         UserManager<AppUser> userManager,
         IUserClaimsPrincipalFactory<AppUser> userClaimsPrincipalFactory,
         IAuthorizationService authorizationService, 
-        RoleManager<AppRole> roleManager,
-        ITokenHelper tokenHelper)
+        RoleManager<AppRole> roleManager)
     {
         _userManager = userManager;
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
         _authorizationService = authorizationService;
         _roleManager = roleManager;
-        _tokenHelper = tokenHelper;
     }
 
     public async Task<string> GetUserNameAsync(Guid userId)
@@ -44,11 +38,11 @@ public class IdentityService : IIdentityService
         return user.UserName;
     }
 
-    public async Task<Guid> CreateUserAsync(AppUser user, string password)
+    public async Task<AppUser> CreateUserAsync(AppUser user, string password)
     {
         var result = await _userManager.CreateAsync(user, password);
-        if (!result.Succeeded) throw new UserCreateFailedException(result.Errors);
-        return user.Id; 
+        if (!result.Succeeded) throw new UserCreateFailedException(result.Errors.First().Description);
+        return user; 
     }
 
     public async Task<bool> IsInRoleAsync(Guid userId, string role)
@@ -111,32 +105,23 @@ public class IdentityService : IIdentityService
         return result;
     }
 
-    public async Task<Token> CreateAccessToken(AppUser user)
-    {
-        var userRoles = await _userManager.GetRolesAsync(user);
-        var accessToken = await _tokenHelper.CreateAccessToken(user, userRoles);
-        return accessToken;
-    }
-
     public async Task<bool> AddUserToRole(Guid userId, string role)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString() );
-
-        if (user is null)
-        {
-            throw new BusinessException(AppMessages.UserNotFound);
-        }
+        var user = await _userManager.FindByIdAsync(userId.ToString() ) ?? throw new BusinessException(AppMessages.UserNotFound);
+        var roleExists = await _roleManager.RoleExistsAsync(role);
+        if (!roleExists) throw new BusinessException(AppMessages.RoleDoesntExist);
 
         var result = await _userManager.AddToRoleAsync(user, role);
-
         return result.Succeeded;
     }
 
     public async Task<bool> CreateRole(string roleName)
     {
+        var roleExists = await _roleManager.RoleExistsAsync(roleName);
+        if (roleExists) throw new BusinessException(AppMessages.RoleAlreadyExists);
+
         AppRole roleToCreate = new(roleName);
         var result = await _roleManager.CreateAsync(roleToCreate);
-
         return result.Succeeded;
     }
 

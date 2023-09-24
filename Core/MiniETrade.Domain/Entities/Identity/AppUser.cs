@@ -19,5 +19,7 @@ namespace MiniETrade.Domain.Entities.Identity
         public Guid CreatedBy { get; set; }
         public Guid? LastModifiedBy { get; set; }
         public Guid? DeletedBy { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
     }
 }
