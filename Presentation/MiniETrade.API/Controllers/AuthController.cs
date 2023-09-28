@@ -5,6 +5,7 @@ using MiniETrade.Application.Features.AppUsers.Commands.CreateRole;
 using MiniETrade.Application.Features.AppUsers.Commands.CreateUser;
 using MiniETrade.Application.Features.AppUsers.Commands.LoginUser;
 using MiniETrade.Application.Features.AppUsers.Commands.RefreshToken;
+using MiniETrade.Application.Features.AppUsers.Commands.RevokeRefreshToken;
 
 namespace MiniETrade.API.Controllers;
 

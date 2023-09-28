@@ -28,7 +28,6 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
 
         var createdUser = await _identityService.CreateUserAsync(new()
         {
-            Id = Guid.NewGuid(),
             FirstName = request.FirstName,
             LastName = request.LastName,
             UserName = request.Username,
@@ -39,7 +38,6 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
             LockoutEnabled = false,
             PhoneNumber = request.PhoneNumber,
             SecurityStamp = Guid.NewGuid().ToString(),
-            Status = true
         }, request.Password);
 
         return new(Message: "User registered with userId: " + createdUser.Id);

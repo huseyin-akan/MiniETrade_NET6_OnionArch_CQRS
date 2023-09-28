@@ -44,6 +44,7 @@ public class BaseDbContext :IdentityDbContext<AppUser, AppRole, Guid>
                     data.Entity.CreatedBy = _currentUserService.UserId;
                     data.Entity.Created = DateTime.Now;
                     data.Entity.Status = true;
+                    data.Entity.Id = Guid.NewGuid();
                     break;
 
                 case EntityState.Modified:

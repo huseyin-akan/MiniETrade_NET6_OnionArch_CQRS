@@ -3,6 +3,7 @@ using MiniETrade.Application.Common.Abstractions.Persistence.Repositories.Produc
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,11 +25,11 @@ namespace MiniETrade.Application.Features.Products.Commands.CreateProduct
 
         public async Task<CreateProductResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var addedProduct = await _productWriteRepository.AddAsync(new()
+            var addedProduct = await _productWriteRepository.AddAsync(new() //TODO-HUS Mapping.
             {
                 Name = request.Name,
                 Stock = request.Stock,
-                Price = request.Price
+                Price = request.Price,
 
             });
 

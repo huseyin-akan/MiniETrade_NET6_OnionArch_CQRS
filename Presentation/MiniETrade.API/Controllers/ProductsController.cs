@@ -57,11 +57,11 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("addproduct")]
+    [Authorize("Admin"), HttpPost("addproduct")]
     public async Task<IActionResult> AddProduct([FromBody] CreateProductCommand request)
     {
         await _mediator.Send(request);
-        return StatusCode((int)HttpStatusCode.Created);
+        return StatusCode((int) HttpStatusCode.Created);
     }
 
     [HttpPut("updateproduct")]

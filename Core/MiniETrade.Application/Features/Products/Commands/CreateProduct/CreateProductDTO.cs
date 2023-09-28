@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace MiniETrade.Application.Features.Products.Commands.CreateProduct
 {
-    public record CreateProductCommand : IRequest<CreateProductResponse>, ITransactionalRequest, ICacheRemoverRequest
+    public record CreateProductCommand : IRequest<CreateProductResponse>, ICacheRemoverRequest
     {
         public string Name { get; set; } = "";
         public int Stock { get; set; }
-        public float Price { get; set; }
+        public decimal Price { get; set; }
         public string? CacheKey => null;
         public bool BypassCache => false;
         public string? CacheGroupKey => "GetProducts";

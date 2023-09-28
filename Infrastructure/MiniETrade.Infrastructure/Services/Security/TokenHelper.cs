@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MiniETrade.Application.Common.Abstractions.Identity;
 using MiniETrade.Application.Common.Abstractions.Security;
