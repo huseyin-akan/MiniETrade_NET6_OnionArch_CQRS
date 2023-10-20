@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +12,7 @@ public static class AppMessages
     public static string PasswordDoesntMatch = "PasswordDoesntMatch";
     public static string RoleAlreadyExists = "RoleAlreadyExists";
     public static string RoleDoesntExist = "RoleDoesntExist";
+    public static string RoleAssigned = "RoleAssigned";
     public static string UserNotFound = "UserNotFound";
     public static string UserCreateFailed = "UserCreateFailed";
     public static string UsernameAlreadyRegistered = "UsernameAlreadyRegistered";

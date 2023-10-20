@@ -27,6 +27,6 @@ public class AssignRoleCommandHandler : IRequestHandler<AssignRoleCommand, Assig
         var result = await _identityService.AddUserToRole(request.UserId, request.Role);
         if (!result) throw new BusinessException(AppMessages.UnexpectedError);
 
-        return new(Message: "Role is assigned to the user"); //TODO-HUS magis string.
+        return new(Message: AppMessages.RoleAssgined); //TODO-HUS magis string.
     }
 }

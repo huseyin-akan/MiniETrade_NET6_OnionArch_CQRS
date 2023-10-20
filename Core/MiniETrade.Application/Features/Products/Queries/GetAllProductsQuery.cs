@@ -23,18 +23,13 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, G
     public async Task<GetAllProductsResponse> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
         var result = await _productReadRepository.GetAllAsync(cancellation: cancellationToken);
-        
-        //TODO-HUS maple.
-        return new GetAllProductsResponse
-        {
-            
-        };
+        return result.MapToDto();
     }
 }
 
 public record GetAllProductsResponse
 {
-    IEnumerable<GetAllProductsDto> Products { get; set; }
+    public IEnumerable<GetAllProductsDto> Products { get; set; }
 
     public GetAllProductsResponse()
     {
